@@ -16,10 +16,11 @@ public class TestChessBoard extends TestCase {
 		cb = null;
 	}
 	
-	public void testIsLocationOccupied() {
-		cb.pieces.add(new Pawn(ChessPiece.BLACK, new ChessCoords("A", 1)));
-		assertFalse(cb.isLocationOccupied(new ChessCoords("B", 2)));
-		assertTrue(cb.isLocationOccupied(new ChessCoords("A", 1)));
+	public void testGetChessPieceAt() {
+		Pawn p = new Pawn(ChessPiece.BLACK, new ChessCoords("A", 1));
+	    cb.pieces.add(p);
+		assertNull(cb.getChessPieceAt(new ChessCoords("B", 2)));
+		assertEquals(p, cb.getChessPieceAt(new ChessCoords("A", 1)));
 	}
 	
 	public void testValidateValidCoordinates() {
