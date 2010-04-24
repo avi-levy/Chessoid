@@ -20,7 +20,7 @@ public class ChessBoard {
 	}
 	
 	/*
-	 * Number of rows an columns on the chess board.  We'll go with
+	 * Number of rows and columns on the chess board.  We'll go with
 	 * standard chess board dimensions of 8 x 8. 
 	 */
 	public static int ROWS = 8;
@@ -28,20 +28,23 @@ public class ChessBoard {
 
 	/**
 	 * Test if the location at the specified coordinates has
-	 * a chess piece on it or not.
+	 * a chess piece on it that would prevent us from moving there.
+	 * BE CAREFUL: returns <b>null</b> if no chess piece at specified
+	 * location.
 	 * @param location ChessCoords to check
-	 * @return true if empty, false if occupied
+	 * @return the chess piece found at the specified coordinates,
+	 * or <b>null</b>, if none was found.
 	 */
-	public boolean isLocationOccupied(ChessCoords location) {
+	public ChessPiece getChessPieceAt(ChessCoords location) {
 		//TODO : should we be checking if the specified location is valid and throws exceptions?
 		//TODO : can the design/performance be improved here?
 		//can we use hashes or something to find chess pieces on the board?
 		for (ChessPiece piece : this.pieces) {
 			if (piece.location.equals(location)) {
-				return true;
+				return piece;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	/**
@@ -67,9 +70,10 @@ public class ChessBoard {
 	 * @param col
 	 * @return integer representation of the column specified by the letter col
 	 * or -1 if it does correspond to any column on the chess board
-	 */
+	 */    
 	public static int translateCol(String col) {
 		//TODO : this breaks if the chess board is not of standard size
+	    //TODO : should this be here or in ChessCoords ???
 		int colnum = -1;
 		col = col.toUpperCase();
 		if (col.equals("A")) {

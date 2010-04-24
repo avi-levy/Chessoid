@@ -1,7 +1,9 @@
 package edu.utd.chess.pieces;
 
 import edu.utd.chess.board.ChessCoords;
-import edu.utd.chess.board.Direction;
+import edu.utd.chess.exceptions.CoordsOccupiedException;
+import edu.utd.chess.exceptions.IllegalMoveException;
+import edu.utd.chess.exceptions.InvalidCoordsException;
 import edu.utd.chess.game.ChessGame;
 
 /**
@@ -10,33 +12,67 @@ import edu.utd.chess.game.ChessGame;
  *
  */
 public class Pawn extends ChessPiece {
-	private boolean firstMove = true; 
+	private boolean firstMove = true;
 	
 	public Pawn(String alignment, ChessCoords location) {
 		super(alignment, location);
 	}
 	
-//	@Override
-//	public boolean canMove(Direction dir, int distance) {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-
+	/**
+	 * Pawns can only move forward one space, except on their
+	 * first move when they can optionally move two spaces.
+	 * Pawns must move diagonally when capturing, but cannot
+	 * move diagonally unless capturing.
+	 * @see ChessPiece#validateMove(ChessCoords)
+	 * @param coords target coordinates on the chess board
+	 * @throws InvalidCoordsException
+	 * @throws IllegalMoveException
+	 */
 	@Override
-	public boolean canMoveTo(ChessCoords coords) {
-		//cannot move to our current location
-		if (coords.equals(this.location)) {
-			return false;
+	public void validateMove(ChessCoords coords) 
+	    throws
+	        InvalidCoordsException,
+	        IllegalMoveException
+	{	    
+	    super.validateMove(coords);
+		//pawns can only move straight ahead unless capturing
+	    if (this.location.column != coords.column) {
+	    	ChessPiece piece = ChessGame.INSTANCE.getChessBoard().getChessPieceAt(coords);
+	    	if (null == piece) {
+	    		//if we're trying to move diagonally and there is nothing to try
+	    		//and capture, then it's an illegal move
+	        	throw new IllegalMoveException();
+	    	}
+	    }
+	    //can't move backwards
+	    if (coords.row < this.location.row) {
+	        throw new IllegalMoveException();
+	    }
+	    //can't move more than 2 ahead on first move, or 
+	    //more than 1 ahead on any subsequent moves
+		if (firstMove 
+		        ? coords.row - this.location.row > 2
+		        : coords.row - this.location.row > 1)
+		{
+		    throw new IllegalMoveException();
 		}
-		//coords must actually exist on the board
-		if (!ChessGame.INSTANCE.getChessBoard().validateCoords(coords)) {
-			return false;
-		}
-		
-		
-		
-		return true;
 	}
 
+	/**
+	 * Calls super.moveTo(), and sets a state variable
+	 * to indicate that this Pawn has moved at least once
+	 * (since Pawns can only move two spaces on their 
+	 * first move). 
+	 */
+	@Override
+	public void moveTo(ChessCoords newLocation)
+	    throws
+	        InvalidCoordsException,
+	        CoordsOccupiedException,
+	        IllegalMoveException
+	{
+	    super.moveTo(newLocation);
+	    firstMove = false;
+	}
 	
 }

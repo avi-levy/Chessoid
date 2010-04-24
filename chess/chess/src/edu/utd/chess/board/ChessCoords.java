@@ -21,12 +21,20 @@ public class ChessCoords {
 	public String column;
 	public int row;
 	
+	/**
+	 * Create a new ChessCoords object representing a location
+	 * on the ChessBoard, e.g A1 is the bottom-right-most
+	 * square on the ChessBoard.
+	 * @param letter aka column
+	 * @param number aka row
+	 */
 	public ChessCoords(String letter, int number) {
-		column = letter;	row = number;
+		column = letter.toUpperCase();	
+		row = number;
 	}
 	
 	public String toString() {
-		return "Chess Coords: ROW: " + row + " COL: " + column;
+		return "Chess Coords: COL: " + column + " ROW: " + row;
 	}
 	
 	public boolean equals(Object other) {
