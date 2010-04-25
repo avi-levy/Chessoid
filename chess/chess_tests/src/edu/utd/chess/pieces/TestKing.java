@@ -23,7 +23,7 @@ public class TestKing extends TestCase {
     public void testValidateMove() throws Exception {
     	ChessCoords e4 = new ChessCoords("E", 4);
     	King k1 = new King(ChessPiece.BLACK, e4);
-    	cb.pieces.add(k1);
+    	cb.pieces.put(e4, k1);
     	
     	//cannot move to current location
     	try {
@@ -174,7 +174,7 @@ public class TestKing extends TestCase {
     	k1 = new King(ChessPiece.BLACK, e4);
 		Pawn p = new Pawn(ChessPiece.WHITE, e5);
 		// register pieces with the board for this to work
-		cb.pieces.add(k1);	cb.pieces.add(p);
+		cb.pieces.put(e4, k1);	cb.pieces.put(e5, p);
 		try {
 			k1.moveTo(p.location);
 			fail("failed to throw expected exception");
@@ -186,7 +186,7 @@ public class TestKing extends TestCase {
 		//occupied cell - illegal move (should throw IllegalMove)
 		ChessCoords a7 = new ChessCoords("A", 7);
 		Pawn p2 = new Pawn(ChessPiece.BLACK, a7); // <-- unreachable
-		cb.pieces.add(p2);
+		cb.pieces.put(a7, p2);
 		try {
 			k1.moveTo(p2.location);
 			fail("failed to throw expected exception");

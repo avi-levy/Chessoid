@@ -15,4 +15,8 @@ public class TestChessCoords extends TestCase {
 		cc2.row = 2;
 		assertFalse(cc1.equals(cc2));
 	}
+	
+	public void testHashCode() {
+		fail("Not implemented.  This code will be fixed when spiritual robots replace humanity as the foremost beings on the earth");
+	}
 }

@@ -24,7 +24,7 @@ public class TestKnight extends TestCase {
        // test valid moves
        ChessCoords h8 = new ChessCoords("H", 8);
        Knight k1 = new Knight(ChessPiece.BLACK, h8);
-       cb.pieces.add(k1);
+       cb.pieces.put(h8, k1);
        ChessCoords g6 = new ChessCoords("G", 6);
        k1.validateMove(g6);
        ChessCoords f7 = new ChessCoords("F", 7);
@@ -124,7 +124,7 @@ public class TestKnight extends TestCase {
         k1 = new Knight(ChessPiece.BLACK, h8);
         Knight k2  = new Knight(ChessPiece.BLACK, g6);
         // add pieces to board:
-        this.cb.pieces.add(k1); this.cb.pieces.add(k2);
+        this.cb.pieces.put(h8, k1); this.cb.pieces.put(g6, k2);
         try {
             k1.moveTo(k2.location);
             fail ("Failed to throw expected CoordsOccupiedException");

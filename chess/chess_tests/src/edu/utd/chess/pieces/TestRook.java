@@ -79,8 +79,8 @@ public class TestRook extends TestCase {
         ChessCoords h1 = new ChessCoords("H", 1);
         Rook r1 = new Rook(ChessPiece.BLACK, a1);
         Rook r2 = new Rook(ChessPiece.BLACK, h1);
-        this.cb.pieces.add(r1);
-        this.cb.pieces.add(r2);
+        this.cb.pieces.put(a1, r1);
+        this.cb.pieces.put(h1, r2);
        
         // move forward by one (legal)
         ChessCoords a2 = new ChessCoords("A", 2);

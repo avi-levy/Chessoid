@@ -13,7 +13,7 @@ public class TestBishop extends TestCase {
     
     public void setUp() {
         cb = ChessGame.INSTANCE.getChessBoard();
-        cb.pieces.clear();
+        
     }
     
     public void tearDown() {
@@ -23,7 +23,7 @@ public class TestBishop extends TestCase {
     public void testValidateMove() throws Exception {
     	ChessCoords e4 = new ChessCoords("E", 4);
     	Bishop b1 = new Bishop(ChessPiece.WHITE, e4);
-    	cb.pieces.add(b1);
+    	cb.pieces.put(e4, b1);
     	
     	// cannot move to current location
     	try {
@@ -99,7 +99,7 @@ public class TestBishop extends TestCase {
     public void testMoveTo() throws Exception {
        	ChessCoords e4 = new ChessCoords("E", 4);
     	Bishop b1 = new Bishop(ChessPiece.WHITE, e4);
-    	cb.pieces.add(b1);
+    	cb.pieces.put(e4, b1);
     	
     	// cannot move to current location
     	try {
@@ -180,7 +180,7 @@ public class TestBishop extends TestCase {
     	
     	//occupied cell - valid move (should throw CoordsOccupied)
     	Pawn p1 = new Pawn(ChessPiece.BLACK, f5);
-    	cb.pieces.add(p1);
+    	cb.pieces.put(f5, p1);
     	try {
     		b1.moveTo(p1.location);
     		fail("failed to throw expected exception");

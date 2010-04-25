@@ -17,8 +17,9 @@ public class TestChessBoard extends TestCase {
 	}
 	
 	public void testGetChessPieceAt() {
-		Pawn p = new Pawn(ChessPiece.BLACK, new ChessCoords("A", 1));
-	    cb.pieces.add(p);
+		ChessCoords coords = new ChessCoords("A", 1);
+		Pawn p = new Pawn(ChessPiece.BLACK, coords);
+	    cb.pieces.put(coords, p);
 		assertNull(cb.getChessPieceAt(new ChessCoords("B", 2)));
 		assertEquals(p, cb.getChessPieceAt(new ChessCoords("A", 1)));
 	}

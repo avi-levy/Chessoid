@@ -86,7 +86,7 @@ public class TestQueen extends TestCase {
         // move to an occupied cell
         Pawn p = new Pawn(ChessPiece.BLACK, a1);
         q = new Queen(ChessPiece.BLACK, e1);
-        this.cb.pieces.add(p);
+        this.cb.pieces.put(a1, p);
         try {
             q.moveTo(p.location);
             fail("failed to throw expected CoordsOccupiedException");

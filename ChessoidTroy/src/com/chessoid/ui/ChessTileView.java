@@ -15,7 +15,7 @@ import edu.utd.chess.pieces.Pawn;
  *
  */
 public class ChessTileView extends TextView {
-	public int color;
+	private int color;
 	private ChessPiece chessPiece;
 	
 	public ChessTileView(Context context, int color) {

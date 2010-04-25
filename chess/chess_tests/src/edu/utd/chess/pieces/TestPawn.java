@@ -90,7 +90,7 @@ public class TestPawn extends TestCase {
         //with a board?
         ChessCoords a1 = new ChessCoords("A", 1);
         Pawn p1 = new Pawn(ChessPiece.WHITE, a1);
-        this.cb.pieces.add(p1);
+        this.cb.pieces.put(a1, p1);
         // move up by two (allowed on first move only)
         ChessCoords a3 = new ChessCoords("A", 3);
         // try to move forward by too many (illegal move)
@@ -106,7 +106,7 @@ public class TestPawn extends TestCase {
         // test trying to move to occupied location
         ChessCoords a4 = new ChessCoords("A", 4);
         Pawn p2 = new Pawn(ChessPiece.WHITE, a4);
-        this.cb.pieces.add(p2);
+        this.cb.pieces.put(a4, p2);
         try {
             p1.moveTo(a4);
             fail("failed to throw expected exception");
