@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.chessoid.activities.R;
 
+import edu.utd.chess.board.ChessCoords;
 import edu.utd.chess.pieces.ChessPiece;
 import edu.utd.chess.pieces.Pawn;
 
@@ -17,10 +18,12 @@ import edu.utd.chess.pieces.Pawn;
 public class ChessTileView extends TextView {
 	private int color;
 	private ChessPiece chessPiece;
+	private ChessCoords coords;	//TODO: oh man, I'm so nervous about this relationship!
 	
-	public ChessTileView(Context context, int color) {
+	public ChessTileView(Context context, int color, ChessCoords coords) {
 		super(context);
 		this.setColor(color);
+		this.coords = coords;
 	}
 	
 	/**
@@ -77,5 +80,12 @@ public class ChessTileView extends TextView {
 		return "ChessTileView, color=" + color + " ChessPiece=" + getChessPiece(); 
 	}
 
+	public ChessCoords getChessCoords() {
+		return this.coords;
+	}
+	
+	public void setChessCoored(ChessCoords coords) {
+		this.coords = coords;
+	}
 
 }

@@ -1,6 +1,7 @@
 package com.chessoid.activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -13,6 +14,8 @@ import android.widget.TableRow;
 import com.chessoid.ui.ChessTileView;
 
 import edu.utd.chess.board.ChessBoard;
+import edu.utd.chess.board.ChessCoords;
+import edu.utd.chess.game.ChessGame;
 import edu.utd.chess.pieces.ChessPiece;
 
 public class ChessoidMain extends Activity {
@@ -55,21 +58,20 @@ public class ChessoidMain extends Activity {
         	tl.addView(tr);
         	// each row has 8 cols
         	for (int j=1; j <= 8; j++) {
-        		ChessTileView tv = new ChessTileView(this, white ? 0xFFFFFFFF : 0x00000000);
-        		tv.setText(ChessBoard.translateCol(j) + i);	// e.g. A1, B2, etc
+        		String letter = ChessBoard.translateCol(j);
+        		ChessCoords coords = new ChessCoords(letter, i);
+        		ChessTileView tv = new ChessTileView(
+        				this, 
+        				white ? 0xFFFFFFFF : 0x00000000,
+        				coords);
+        		chessTiles.add(tv);
+        		tv.setText(letter + i);	// e.g. A1, B2, etc
         		tv.setMinHeight(40);
         		tv.setMinWidth(40);
         		tv.setClickable(true);
         		tv.setOnClickListener(ocl);
-        		tr.addView(tv);
-        		chessTiles.add(tv);
-        		
+        		tr.addView(tv);	
         		white = !white;	// <-- toggle between black and white tile while creating table
-        		
-//        		//add icons to bottom row
-//        		if (i == 2) {
-//        			tv.setChessPiece(new Pawn(ChessPiece.BLACK, new ChessCoords("A", 1)));
-//        		}
         	}
         	white = !white;	// <-- alternate the starting color for each row
         }
@@ -127,6 +129,10 @@ public class ChessoidMain extends Activity {
     		//and this method is called)
     	
     		//2nd one is better
+    	
+    	for (ChessTileView tile : chessTiles) {
+    		tile.setChessPiece(ChessGame.INSTANCE.getDefaultChessSet().get(tile.getChessCoords()));
+    	}
     }
    
 }
