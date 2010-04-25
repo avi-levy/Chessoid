@@ -44,16 +44,16 @@ public class ChessoidMain extends Activity {
         int windowWidth = this.getWindow().getAttributes().width;
         
         // 8 rows
-        for (int i=1; i <= 8; i++) {
+        for (int i=8; i >= 1; i--) {
         	TableRow tr = new TableRow(this);
         	tr.setMinimumHeight(35);
         	tl.addView(tr);
         	// each row has 8 cols
-        	for (int j=8; j >= 1; j--) {
+        	for (int j=1; j <= 8; j++) {
         		ChessTileView tv = new ChessTileView(this, white ? 0xFFFFFFFF : 0x00000000);
         		tv.setText(ChessBoard.translateCol(j) + i);	// e.g. A1, B2, etc
-        		tv.setMinHeight(45);
-        		tv.setMinWidth(45);
+        		tv.setMinHeight(40);
+        		tv.setMinWidth(40);
         		tv.setClickable(true);
         		tv.setOnClickListener(ocl);
         		tr.addView(tv);
@@ -61,7 +61,7 @@ public class ChessoidMain extends Activity {
         		white = !white;	// <-- toggle between black and white tile while creating table
         		
         		//add icons to bottom row
-        		if (i == 7) {
+        		if (i == 2) {
         			tv.setChessPiece(new Pawn(ChessPiece.BLACK, new ChessCoords("A", 1)));
         		}
         	}
