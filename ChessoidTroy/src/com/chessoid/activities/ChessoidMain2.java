@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.GridView;
 
 import com.chessoid.ui.ChessTileView;
 
@@ -14,7 +13,14 @@ import edu.utd.chess.board.ChessCoords;
 import edu.utd.chess.pieces.ChessPiece;
 import edu.utd.chess.pieces.Pawn;
 
-public class ChessoidMain extends Activity {
+
+/**
+ * Maybe we should be using a GridView instead of a TableLayout.  Dunno.
+ * Try it later.
+ * @author troy
+ *
+ */
+public class ChessoidMain2 extends Activity {
 	
 	/**
 	 * Pieces in the clipboard are waiting to be moved.
@@ -29,7 +35,7 @@ public class ChessoidMain extends Activity {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.main);
         
-        TableLayout tl = new TableLayout(this);
+        GridView gv = (GridView) findViewById(R.id.gridview);
         
         boolean white = true;
         
@@ -41,36 +47,35 @@ public class ChessoidMain extends Activity {
         	}
         };
         
-        int windowWidth = this.getWindow().getAttributes().width;
-        
         // 8 rows
         for (int i=1; i <= 8; i++) {
-        	TableRow tr = new TableRow(this);
-        	tr.setMinimumHeight(35);
-        	tl.addView(tr);
+        	//TableRow tr = new TableRow(this);
+        	//tr.setMinimumHeight(35);
+        	//gv.addView(tr);
         	// each row has 8 cols
-        	for (int j=8; j >= 1; j--) {
+        	for (int j=1; j <= 8; j++) {
         		ChessTileView tv = new ChessTileView(this, white ? 0xFFFFFFFF : 0x00000000);
-        		tv.setText(ChessBoard.translateCol(j) + i);	// e.g. A1, B2, etc
-        		tv.setMinHeight(45);
-        		tv.setMinWidth(45);
+        		tv.setText(ChessBoard.translateCol(i) + j);	// e.g. A1, B2, etc
+        		tv.setHeight(35);
         		tv.setClickable(true);
         		tv.setOnClickListener(ocl);
-        		tr.addView(tv);
+        		//tr.addView(tv);
+        		gv.addView(tv);
         		
         		white = !white;	// <-- toggle between black and white tile while creating table
         		
         		//add icons to bottom row
-        		if (i == 7) {
+        		if (i == 8) {
         			tv.setChessPiece(new Pawn(ChessPiece.BLACK, new ChessCoords("A", 1)));
         		}
+        		
         	}
         	white = !white;	// <-- alternate the starting color for each row
         }
         
-        tl.setStretchAllColumns(true);
-        tl.setPadding(3, 3, 3, 3);
-        setContentView(tl);
+        //gv.setStretchAllColumns(true);
+        gv.setPadding(3, 3, 3, 3);
+        setContentView(gv);
         
     }
     
@@ -101,8 +106,5 @@ public class ChessoidMain extends Activity {
     	}
     	return false;
     }
-   
+
 }
-
-
-

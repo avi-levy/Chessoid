@@ -102,4 +102,42 @@ public class ChessBoard {
 		}
 		return colnum;
 	}
+	
+	/**
+	 * Translate the int value for a column A-H into
+	 * a String value, e.g A=1, B=2,...H=8, or <b><code>null</b></code>
+	 * if there is no match.  Complements translateCol(String).
+	 * @param col
+	 * @return String representation of the column specified by the int col
+	 * or <b><code>null</b></code> if it does correspond to any column on the chess board
+	 */
+	public static String translateCol(int col) {
+		//TODO : this breaks if the chess board is not of standard size
+		String colnum = null;
+		if (col == 1) {
+			colnum = "A";
+		}
+		else if (col ==2 ) {
+			colnum = "B";
+		}
+		else if (col == 3) {
+			colnum = "C";
+		}
+		else if (col == 4) {
+			colnum = "D";
+		}
+		else if (col == 5) {
+			colnum = "E";
+		}
+		else if (col == 6) {
+			colnum = "F";
+		}
+		else if (col == 7) {
+			colnum = "G";
+		}
+		else if (col == 8) {
+			colnum = "H";
+		}
+		return colnum;
+	}
 }
