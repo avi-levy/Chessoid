@@ -36,7 +36,7 @@ public class ChessBoard {
 	 * or <b>null</b>, if none was found.
 	 */
 	public ChessPiece getChessPieceAt(ChessCoords location) {
-		//TODO : should we be checking if the specified location is valid and throws exceptions?
+		//TODO : should we be checking if the specified location is valid and throwing exceptions?
 		return this.pieces.get(location);
 	}
 	

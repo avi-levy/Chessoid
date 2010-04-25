@@ -1,5 +1,8 @@
 package com.chessoid.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,11 +13,15 @@ import android.widget.TableRow;
 import com.chessoid.ui.ChessTileView;
 
 import edu.utd.chess.board.ChessBoard;
-import edu.utd.chess.board.ChessCoords;
 import edu.utd.chess.pieces.ChessPiece;
-import edu.utd.chess.pieces.Pawn;
 
 public class ChessoidMain extends Activity {
+	
+	/**
+	 * List of references to all tiles on the board.
+	 * For internal use only, not to be referenced outside this class.
+	 */
+	private List<ChessTileView> chessTiles = new ArrayList<ChessTileView>();
 	
 	/**
 	 * Pieces in the clipboard are waiting to be moved.
@@ -41,8 +48,6 @@ public class ChessoidMain extends Activity {
         	}
         };
         
-        int windowWidth = this.getWindow().getAttributes().width;
-        
         // 8 rows
         for (int i=8; i >= 1; i--) {
         	TableRow tr = new TableRow(this);
@@ -57,6 +62,7 @@ public class ChessoidMain extends Activity {
         		tv.setClickable(true);
         		tv.setOnClickListener(ocl);
         		tr.addView(tv);
+        		chessTiles.add(tv);
         		
         		white = !white;	// <-- toggle between black and white tile while creating table
         		

@@ -46,7 +46,7 @@ public class ChessTileView extends TextView {
 			//TODO: refactoring - ChessPiece should have method getIcon()
 			if (piece instanceof Pawn) {
 				if (piece.alignment.equals("BLACK")) {
-					this.setBackgroundResource(R.drawable.pawn_white);
+					this.setBackgroundResource(R.drawable.pawn_black);
 				}
 				else {
 					//placeholder - android robot
@@ -56,11 +56,19 @@ public class ChessTileView extends TextView {
 		}
 	}
 	
+	/**
+	 * Set the default color for this ChessTile.
+	 * @param color
+	 */
 	public void setColor(int color) {
 		this.color = color;
 		setBackgroundColor(this.color);
 	}
 	
+	/**
+	 * Get the color associated with this ChessTile.
+	 * @return
+	 */
 	public int getColor() {
 		return this.color;
 	}
