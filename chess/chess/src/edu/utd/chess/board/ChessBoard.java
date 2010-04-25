@@ -1,6 +1,6 @@
 package edu.utd.chess.board;
 
-import java.util.List;
+import java.util.HashMap;
 
 import edu.utd.chess.pieces.ChessPiece;
 
@@ -8,15 +8,15 @@ public class ChessBoard {
 	/**
 	 * A list of all the ChessPieces currently on the board. 
 	 */
-	public List<ChessPiece> pieces;
+	public HashMap<ChessCoords, ChessPiece> pieces;
 	
 	/**
 	 * ChessBoard constructor.  Requires a list of chess pieces
 	 * on the board to be provided
 	 * @param pieces a List of <code>ChessPiece</code>s
 	 */
-	public ChessBoard(List<ChessPiece> pieces) {
-		this.pieces = pieces; 
+	public ChessBoard(HashMap<ChessCoords, ChessPiece> pieces) {
+		this.pieces = pieces;
 	}
 	
 	/*
@@ -37,14 +37,7 @@ public class ChessBoard {
 	 */
 	public ChessPiece getChessPieceAt(ChessCoords location) {
 		//TODO : should we be checking if the specified location is valid and throws exceptions?
-		//TODO : can the design/performance be improved here?
-		//can we use hashes or something to find chess pieces on the board?
-		for (ChessPiece piece : this.pieces) {
-			if (piece.location.equals(location)) {
-				return piece;
-			}
-		}
-		return null;
+		return this.pieces.get(location);
 	}
 	
 	/**

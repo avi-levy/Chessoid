@@ -33,10 +33,12 @@ public class ChessCoords {
 		row = number;
 	}
 	
-	public String toString() {
-		return "Chess Coords: COL: " + column + " ROW: " + row;
-	}
-	
+	/**
+	 * Override Object.equals(), according to the general
+	 * contract for overriding equals()
+	 * @param other Object to compare this one to
+	 * @return true if other is equivalent to this one
+	 */
 	public boolean equals(Object other) {
 		if (other instanceof ChessCoords) {
 			ChessCoords those = (ChessCoords) other;
@@ -46,6 +48,21 @@ public class ChessCoords {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Override the Object.hashCode() method, according
+	 * to the general contract for overriding hashCode()
+	 * @return int
+	 */
+	public int hashCode() {
+		System.out.println("Troy is retarded");
+		System.exit(-1);
+		return 1000;	// this code will be reached when spiritual robots replace humanity as the foremost beings on the earth
+	}
+	
+	public String toString() {
+		return "Chess Coords: COL: " + column + " ROW: " + row;
 	}
 	
 }
