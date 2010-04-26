@@ -1,3 +1,4 @@
+package com.chessoid.app;
 //package com.chessoid.activities;
 //
 //import android.app.Activity;

@@ -1,4 +1,4 @@
-package com.chessoid.activities;
+package com.chessoid.app;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,8 +37,46 @@ public class ChessoidMain extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.main);
-        
+        initTableLayout();
+        initChessBoard();
+    }
+    
+    /**
+     * Move a piece from one tile to another
+     * @param v
+     * @return true if a move was made, false if not
+     */
+    public boolean moveIcon(View v) {
+    	if (v instanceof ChessTileView) {
+    		ChessTileView tile = (ChessTileView) v;
+    		ChessPiece piece = tile.getChessPiece();
+    		if (null != piece) {
+    			//put piece on the clipboard to be dropped on next tile clicked
+    			clipboard = tile;
+    			//TODO: animate the currently selected chess piece
+    		}
+    		else {
+    			if (null != clipboard) {
+	    			if (clipboard.getChessPiece() != null) {
+	    				//drop piece from clipboard at new tile
+	    				tile.setChessPiece(clipboard.getChessPiece());
+	    				clipboard.setChessPiece(null);
+	    				//null out clipboard, we're done with this move
+	    				clipboard = null;
+	    			}
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+    /**
+     * Create a TableLayout and add it to this Activity as the
+     * content view (setContentView()).  Adds 8 rows and columns
+     * and sets up the chess board layout with alternating black
+     * and white tiles.
+     */
+    public void initTableLayout() {
         TableLayout tl = new TableLayout(this);
         
         boolean white = true;
@@ -75,40 +113,9 @@ public class ChessoidMain extends Activity {
         	white = !white;	// <-- alternate the starting color for each row
         }
         
-        initChessBoard();
-        
         tl.setStretchAllColumns(true);
         tl.setPadding(3, 3, 3, 3);
         setContentView(tl);
-        
-    }
-    
-    /**
-     * Move a piece from one tile to another
-     * @param v
-     * @return true if a move was made, false if not
-     */
-    public boolean moveIcon(View v) {
-    	if (v instanceof ChessTileView) {
-    		ChessTileView tile = (ChessTileView) v;
-    		ChessPiece piece = tile.getChessPiece();
-    		if (null != piece) {
-    			//put piece on the clipboard to be dropped on next tile clicked
-    			clipboard = tile;
-    		}
-    		else {
-    			if (null != clipboard) {
-	    			if (clipboard.getChessPiece() != null) {
-	    				//drop piece from clipboard at new tile
-	    				tile.setChessPiece(clipboard.getChessPiece());
-	    				clipboard.setChessPiece(null);
-	    				//null out clipboard, we're done with this move
-	    				clipboard = null;
-	    			}
-    			}
-    		}
-    	}
-    	return false;
     }
     
     /**

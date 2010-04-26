@@ -3,7 +3,7 @@ package com.chessoid.ui;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.chessoid.activities.R;
+import com.chessoid.app.R;
 
 import edu.utd.chess.board.ChessCoords;
 import edu.utd.chess.pieces.Bishop;
@@ -89,7 +89,7 @@ public class ChessTileView extends TextView {
 					this.setBackgroundResource(R.drawable.queen_black);
 				}
 				else {
-					this.setBackgroundResource(R.drawable.queen_black);
+					this.setBackgroundResource(R.drawable.queen_white);
 				}
 			}
 			else if (piece instanceof King) {

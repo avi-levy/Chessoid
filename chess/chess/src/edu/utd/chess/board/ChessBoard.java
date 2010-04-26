@@ -110,7 +110,7 @@ public class ChessBoard {
 		if (col == 1) {
 			colnum = "A";
 		}
-		else if (col ==2 ) {
+		else if (col == 2 ) {
 			colnum = "B";
 		}
 		else if (col == 3) {
