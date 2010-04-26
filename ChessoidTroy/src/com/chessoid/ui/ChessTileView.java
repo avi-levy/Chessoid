@@ -6,8 +6,13 @@ import android.widget.TextView;
 import com.chessoid.activities.R;
 
 import edu.utd.chess.board.ChessCoords;
+import edu.utd.chess.pieces.Bishop;
 import edu.utd.chess.pieces.ChessPiece;
+import edu.utd.chess.pieces.King;
+import edu.utd.chess.pieces.Knight;
 import edu.utd.chess.pieces.Pawn;
+import edu.utd.chess.pieces.Queen;
+import edu.utd.chess.pieces.Rook;
 
 /**
  * Works like a standard TextView but allows us to ask
@@ -46,14 +51,53 @@ public class ChessTileView extends TextView {
 		if (null == piece) {
 			this.setBackgroundColor(color);
 		} else {
-			//TODO: refactoring - ChessPiece should have method getIcon()
+			//TODO: Help, I'm ugly!
 			if (piece instanceof Pawn) {
 				if (piece.alignment.equals("BLACK")) {
 					this.setBackgroundResource(R.drawable.pawn_black);
 				}
 				else {
-					//placeholder - android robot
-					this.setBackgroundResource(R.drawable.android_robot);
+					this.setBackgroundResource(R.drawable.pawn_white);
+				}
+			}
+			else if (piece instanceof Rook) {
+				if (piece.alignment.equals("BLACK")) {
+					this.setBackgroundResource(R.drawable.rook_black);
+				}
+				else {
+					this.setBackgroundResource(R.drawable.rook_white);
+				}
+			}
+			else if (piece instanceof Bishop) {
+				if (piece.alignment.equals("BLACK")) {
+					this.setBackgroundResource(R.drawable.bishop_black);
+				}
+				else {
+					this.setBackgroundResource(R.drawable.bishop_white);
+				}
+			}
+			else if (piece instanceof Knight) {
+				if (piece.alignment.equals("BLACK")) {
+					this.setBackgroundResource(R.drawable.knight_black);
+				}
+				else {
+					this.setBackgroundResource(R.drawable.knight_white);
+				}
+			}
+			else if (piece instanceof Queen) {
+				if (piece.alignment.equals("BLACK")) {
+					this.setBackgroundResource(R.drawable.queen_black);
+				}
+				else {
+					this.setBackgroundResource(R.drawable.queen_black);
+				}
+			}
+			else if (piece instanceof King) {
+				if (piece.alignment.equals("BLACK")) {
+					this.setBackgroundResource(R.drawable.king_black);
+				}
+				else {
+					this.setBackgroundResource(R.drawable.king_white);
 				}
 			}
 		}
@@ -77,7 +121,8 @@ public class ChessTileView extends TextView {
 	}
 	
 	public String toString() {
-		return "ChessTileView, color=" + color + " ChessPiece=" + getChessPiece(); 
+		return "ChessTileView, color=" + color + " Coords: " 
+			+ this.coords + " ChessPiece=" + getChessPiece();
 	}
 
 	public ChessCoords getChessCoords() {

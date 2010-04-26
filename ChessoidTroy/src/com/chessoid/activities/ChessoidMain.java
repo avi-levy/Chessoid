@@ -46,7 +46,6 @@ public class ChessoidMain extends Activity {
         OnClickListener ocl = new OnClickListener() {
         	@Override
         	public void onClick(View v) {        	
-        		//v.setBackgroundResource(R.drawable.icon);
         		moveIcon(v);
         	}
         };
@@ -116,22 +115,9 @@ public class ChessoidMain extends Activity {
      * Set up the chess pieces in the default position
      */
     public void initChessBoard() {
-    	    //create an instance var hashmap (or some kinda hashed thing)
-    		//and put each tile in it, indexed by a ChessCoord, as we build them in the for loop in the constructor.
-    		//now here, iterate over the default chess set and put each one on the appropriate
-    		//tile (setChessPiece) from the map.
-    	
-    		//alt - make the defaultChessSet a map
-    		//and iterate over a list of all the tiles.
-    		//if the defaultChessSet map has an entry at the current coord,
-    		//do tile.setChessPiece() for the piece, else set it to null
-    		//(ensures no stragglers if you already had some pieces on the board
-    		//and this method is called)
-    	
-    		//2nd one is better
-    	
+    	HashMap<ChessCoords, ChessPiece> chessSet = ChessGame.INSTANCE.getDefaultChessSet(); 
     	for (ChessTileView tile : chessTiles) {
-    		tile.setChessPiece(ChessGame.INSTANCE.getDefaultChessSet().get(tile.getChessCoords()));
+    		tile.setChessPiece(chessSet.get(tile.getChessCoords()));
     	}
     }
    

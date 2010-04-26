@@ -100,11 +100,12 @@ public class ChessGame {
 			pieces.put(h8, r2);
 			
 			//white pawns
+			byte ascii2[] = {65};
 			for (int i=0; i < 8; i++) {
 				//A2 - H2
-				ChessCoords coords = new ChessCoords(new String(ascii), 2);
+				ChessCoords coords = new ChessCoords(new String(ascii2), 2);
 				Pawn p = new Pawn(ChessPiece.WHITE, coords);
-				ascii[0] = (byte) (ascii[0] + (byte) 1);
+				ascii2[0] = (byte) (ascii2[0] + (byte) 1);
 				pieces.put(coords, p);
 			}
 			
