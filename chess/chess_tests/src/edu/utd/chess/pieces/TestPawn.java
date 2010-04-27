@@ -79,6 +79,10 @@ public class TestPawn extends TestCase {
         catch (IllegalMoveException e) {
         	//should get here
         }
+        
+        //make sure we can move forward
+        Pawn p2 = new Pawn(ChessPiece.WHITE, new ChessCoords("A", 2));
+        p2.validateMove(new ChessCoords("A", 3));
     }
 
     public void testMoveTo() throws Exception {

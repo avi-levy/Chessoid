@@ -36,7 +36,7 @@ public class Pawn extends ChessPiece {
 	{	    
 	    super.validateMove(coords);
 		//pawns can only move straight ahead unless capturing
-	    if (this.location.column != coords.column) {
+	    if (! this.location.column.equals(coords.column)) {
 	    	ChessPiece piece = ChessGame.INSTANCE.getChessBoard().getChessPieceAt(coords);
 	    	if (null == piece) {
 	    		//if we're trying to move diagonally and there is nothing to try
@@ -45,9 +45,13 @@ public class Pawn extends ChessPiece {
 	    	}
 	    }
 	    //can't move backwards
-	    if (coords.row < this.location.row) {
-	        throw new IllegalMoveException();
+	    if (this.alignment.equals(ChessPiece.BLACK) && coords.row > this.location.row) {
+	    	throw new IllegalMoveException(); 
 	    }
+	    else if (this.alignment.equals(ChessPiece.WHITE) && coords.row < this.location.row) {
+	    	throw new IllegalMoveException();
+	    }
+	    
 	    //can't move more than 2 ahead on first move, or 
 	    //more than 1 ahead on any subsequent moves
 		if (firstMove 
@@ -73,6 +77,20 @@ public class Pawn extends ChessPiece {
 	{
 	    super.moveTo(newLocation);
 	    firstMove = false;
+	}
+	
+	//TODO document and test
+	public int hashCode() {
+		return 100;
+	}
+	
+	//TODO document and test
+	public boolean equals(Object other) {
+		if (other instanceof Pawn) {
+			return super.equals(other) 
+				&& (this.firstMove == ((Pawn) other).firstMove);
+		}
+		return false;
 	}
 	
 }

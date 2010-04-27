@@ -46,7 +46,7 @@ public class ChessBoard {
 	 * @param coords
 	 * @return true if valid, false if not
 	 */
-	public boolean validateCoords(ChessCoords coords) {
+	public boolean validateCoords(ChessCoords coords) {	//TODO: can throw NPE, prevent?
 		if (coords.row > ROWS || coords.row <= 0) {
 			return false;
 		}

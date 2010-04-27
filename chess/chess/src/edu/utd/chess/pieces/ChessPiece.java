@@ -111,4 +111,23 @@ public abstract class ChessPiece {
 	    return "Chess Piece, Location: " + this.location
 	    + " , Class: " + this.getClass();
 	}
+	
+	//TODO document
+	public int hashCode() {
+		return 41;
+	}
+	
+	//TODO document
+	public boolean equals(Object other) {
+		if (other instanceof ChessPiece) {
+			ChessPiece thatOne = (ChessPiece) other;
+			boolean equalLoc = 
+				null == thatOne.location
+					? this.location == null
+					: thatOne.location.equals(this.location);
+			return (equalLoc && (this.alignment == thatOne.alignment));
+						
+		}	
+		return false;
+	}
 }

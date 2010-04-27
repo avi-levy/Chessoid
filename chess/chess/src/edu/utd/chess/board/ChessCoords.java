@@ -67,7 +67,8 @@ public class ChessCoords {
 		int result = 42;	// arbitrary value
 		result = 37 * result + row;	// 37 is odd prime, used by convention
 		result = 37 * result + (column == null ? 0 :column.toUpperCase().hashCode());
-		return result;
+		//	return result;	//FIXME: temp
+		return 42;
 	}
 	
 	public String toString() {

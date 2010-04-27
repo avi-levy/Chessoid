@@ -1,7 +1,8 @@
 package edu.utd.chess.board;
 
+import java.util.HashMap;
+
 import junit.framework.TestCase;
-import edu.utd.chess.game.ChessGame;
 import edu.utd.chess.pieces.ChessPiece;
 import edu.utd.chess.pieces.Pawn;
 
@@ -9,7 +10,7 @@ public class TestChessBoard extends TestCase {
 	ChessBoard cb;
 	
 	public void setUp() {
-		cb = ChessGame.INSTANCE.getChessBoard();
+		cb = new ChessBoard(new HashMap<ChessCoords, ChessPiece>());
 	}
 	
 	public void tearDown() {
