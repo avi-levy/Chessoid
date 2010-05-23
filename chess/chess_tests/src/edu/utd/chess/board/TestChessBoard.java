@@ -1,28 +1,46 @@
 package edu.utd.chess.board;
 
-import java.util.HashMap;
-
 import junit.framework.TestCase;
+import edu.utd.chess.game.ChessGame;
+import edu.utd.chess.pieces.Bishop;
 import edu.utd.chess.pieces.ChessPiece;
-import edu.utd.chess.pieces.Pawn;
+import edu.utd.chess.pieces.Knight;
+import edu.utd.chess.pieces.Queen;
+import edu.utd.chess.pieces.Rook;
 
 public class TestChessBoard extends TestCase {
 	ChessBoard cb;
 	
 	public void setUp() {
-		cb = new ChessBoard(new HashMap<ChessCoords, ChessPiece>());
+		cb = new ChessBoard(ChessGame.INSTANCE.createDefaultChessSet());
 	}
 	
 	public void tearDown() {
 		cb = null;
 	}
 	
-	public void testGetChessPieceAt() {
+	public void testGetChessPieceAtChessCoords() {
 		ChessCoords coords = new ChessCoords("A", 1);
-		Pawn p = new Pawn(ChessPiece.BLACK, coords);
-	    cb.pieces.put(coords, p);
-		assertNull(cb.getChessPieceAt(new ChessCoords("B", 2)));
-		assertEquals(p, cb.getChessPieceAt(new ChessCoords("A", 1)));
+		ChessPiece whiterook = cb.getChessPieceAt(coords);
+		assertTrue(whiterook instanceof Rook);
+		assertTrue(whiterook.alignment.equals(ChessPiece.WHITE));
+		assertEquals(coords, whiterook.location);
+		coords = new ChessCoords("D", 8);
+		ChessPiece blackqueen = cb.getChessPieceAt(coords);
+		assertTrue(blackqueen instanceof Queen);
+		assertEquals(ChessPiece.BLACK, blackqueen.alignment);
+		assertEquals(coords, blackqueen.location);
+	}
+	
+	public void testGetChessPieceAtStringString() {
+		ChessPiece whiteknight = cb.getChessPieceAt("G", 1);
+		assertTrue(whiteknight instanceof Knight);
+		assertEquals(ChessPiece.WHITE, whiteknight.alignment);
+		assertEquals(new ChessCoords("G", 1), whiteknight.location);
+		ChessPiece blackbishop = cb.getChessPieceAt("F", 8);
+		assertTrue(blackbishop instanceof Bishop);
+		assertEquals(ChessPiece.BLACK, blackbishop.alignment);
+		assertEquals(new ChessCoords("F", 8), blackbishop.location);
 	}
 	
 	public void testValidateValidCoordinates() {

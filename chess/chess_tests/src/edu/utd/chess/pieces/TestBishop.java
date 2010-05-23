@@ -1,5 +1,8 @@
 package edu.utd.chess.pieces;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 import edu.utd.chess.board.ChessBoard;
 import edu.utd.chess.board.ChessCoords;
@@ -12,18 +15,16 @@ public class TestBishop extends TestCase {
     ChessBoard cb;
     
     public void setUp() {
-        cb = ChessGame.INSTANCE.getChessBoard();
-        
+    	resetBoard();
     }
     
     public void tearDown() {
-        cb.pieces.clear();
+        cb = null;
     }
 	
     public void testValidateMove() throws Exception {
-    	ChessCoords e4 = new ChessCoords("E", 4);
-    	Bishop b1 = new Bishop(ChessPiece.WHITE, e4);
-    	cb.pieces.put(e4, b1);
+    	ChessPiece b1 = (Bishop) cb.getChessPieceAt("C", 1);
+
     	
     	// cannot move to current location
     	try {
@@ -34,17 +35,16 @@ public class TestBishop extends TestCase {
     		// should get here
     	}
     	
-    	//valid targets - can move diagonally as many spaces as it wants
-    	ChessCoords f5 = new ChessCoords("F", 5);
-    	ChessCoords d3 = new ChessCoords("D", 3);
-    	ChessCoords g6 = new ChessCoords("G", 6);
-    	ChessCoords h7 = new ChessCoords("H", 7);
-    	ChessCoords a8 = new ChessCoords("A", 8);
-    	ChessCoords b7 = new ChessCoords("B", 7);
-    	ChessCoords f3 = new ChessCoords("F", 3);
-    	ChessCoords g2 = new ChessCoords("G", 2);
-    	
-    	ChessCoords[] validTargets = { f5, d3, g6, h7, a8, b7, f3, g2 };
+    	// valid targets - can move diagonally as many spaces as it wants
+    	// (D2 and B2 will be occupied by pawns)
+    	// TODO: eventually this should fail because the pawns should have
+    	// to get out of the way
+    	List<ChessCoords> validTargets = new ArrayList<ChessCoords>();
+    	validTargets.add(new ChessCoords("E", 3));
+    	validTargets.add(new ChessCoords("F", 4));
+    	validTargets.add(new ChessCoords("G", 5));
+    	validTargets.add(new ChessCoords("H", 6));
+    	validTargets.add(new ChessCoords("A", 3));
     	
     	for (ChessCoords coords : validTargets) {
     		try {
@@ -77,7 +77,7 @@ public class TestBishop extends TestCase {
     		}
     	}
     	
-       	//invalid targets
+       	//invalid targets (don't exist on board)
     	ChessCoords a9 = new ChessCoords("A", 9);
     	ChessCoords z23 = new ChessCoords("Z", 23);
     	ChessCoords aa1 = new ChessCoords("AA", 1);
@@ -96,11 +96,9 @@ public class TestBishop extends TestCase {
     	}
     }
     
-    public void testMoveTo() throws Exception {
-       	ChessCoords e4 = new ChessCoords("E", 4);
-    	Bishop b1 = new Bishop(ChessPiece.WHITE, e4);
-    	cb.pieces.put(e4, b1);
-    	
+    public void testMoveToCurrentLocation() throws Exception {
+    	ChessCoords c8 = new ChessCoords("C", 8);
+    	Bishop b1 = (Bishop) cb.getChessPieceAt(c8);    	
     	// cannot move to current location
     	try {
     		b1.moveTo(b1.location);
@@ -109,32 +107,37 @@ public class TestBishop extends TestCase {
     	catch (IllegalMoveException e) {
     		// should get here
     	}
-    	assertEquals(e4, b1.location);
+    	assertEquals(c8, b1.location);
+    }
+    
+    public void testMoveToValidTargets() throws Exception {
+    	ChessCoords origCoords = new ChessCoords("C", 8);
     	
     	//valid targets - can move diagonally as many spaces as it wants
-    	ChessCoords f5 = new ChessCoords("F", 5);
-    	ChessCoords d3 = new ChessCoords("D", 3);
-    	ChessCoords g6 = new ChessCoords("G", 6);
-    	ChessCoords h7 = new ChessCoords("H", 7);
-    	ChessCoords a8 = new ChessCoords("A", 8);
-    	ChessCoords b7 = new ChessCoords("B", 7);
-    	ChessCoords f3 = new ChessCoords("F", 3);
-    	ChessCoords g2 = new ChessCoords("G", 2);
-    	
-    	ChessCoords[] validTargets = { f5, d3, g6, h7, a8, b7, f3, g2 };
+    	List<ChessCoords> validTargets = new ArrayList<ChessCoords>();
+    	validTargets.add(new ChessCoords("A", 6));
+    	validTargets.add(new ChessCoords("E", 6));
+    	validTargets.add(new ChessCoords("F", 5));
+    	validTargets.add(new ChessCoords("G", 4));
+    	validTargets.add(new ChessCoords("H", 3));
     	
     	for (ChessCoords coords : validTargets) {
+    		Bishop b1 = (Bishop) cb.getChessPieceAt(origCoords);
     		try {
-    			b1 = new Bishop(ChessPiece.WHITE, e4);
     			b1.moveTo(coords);
+    			resetBoard();
+    			assertEquals(coords, b1.location);
     		}
     		catch (IllegalMoveException e) {
     			e.printStackTrace();
     			fail("Unexpected exception: " + e.getClass() 
     					+ " for target coords: " + coords);
     		}
-    		assertEquals(coords, b1.location);
     	}
+    }
+    
+    public void testMoveToIllegalTargets() throws Exception {
+    	ChessCoords origCoords = new ChessCoords("C", 8);
     	
       	//illegal targets
     	ChessCoords a7 = new ChessCoords("A", 7);
@@ -146,8 +149,8 @@ public class TestBishop extends TestCase {
     	
       	ChessCoords[] illegalTargets = { a7, g7, e2, c3, a4, e1 };
     	for (ChessCoords coords : illegalTargets) {
+    		Bishop b1 = (Bishop) cb.getChessPieceAt(origCoords);
     		try {
-    			b1 = new Bishop(ChessPiece.WHITE, e4);
 	    		b1.moveTo(coords);
 	    		fail("failed to throw expected IllegalMoveExpcetion " +
 	    				"for move to coords: " + coords);
@@ -155,19 +158,23 @@ public class TestBishop extends TestCase {
     		catch (IllegalMoveException e) {
     			// should get here
     		}
-    		assertEquals(e4, b1.location);
+    		assertEquals(origCoords, b1.location);	// <-- should not have moved
     	}
+    }
+    
+    public void testMoveToInvalidTargets() throws Exception {
+    	ChessCoords origCoords = new ChessCoords("C", 8);
     	
        	//invalid targets
-    	ChessCoords a9 = new ChessCoords("A", 9);
-    	ChessCoords z23 = new ChessCoords("Z", 23);
-    	ChessCoords aa1 = new ChessCoords("AA", 1);
-    	ChessCoords a1_1 = new ChessCoords("A1", 1);
+    	List<ChessCoords> invalidTargets  = new ArrayList<ChessCoords>();
+    	invalidTargets.add(new ChessCoords("A", 9));
+    	invalidTargets.add(new ChessCoords("Z", 23));
+    	invalidTargets.add(new ChessCoords("AA", 1));
+    	invalidTargets.add(new ChessCoords("A1", 1));
     	
-    	ChessCoords[] invalidTargets = { a9, z23, aa1, a1_1 };
     	for (ChessCoords coords : invalidTargets) {
+    		Bishop b1 = (Bishop) cb.getChessPieceAt(origCoords);
     		try {
-    			b1 = new Bishop(ChessPiece.WHITE, e4);
 	    		b1.validateMove(coords);
 	    		fail("failed to throw expected InvalidCoordsException " +
 	    				"for move to coords: " + coords);
@@ -175,12 +182,16 @@ public class TestBishop extends TestCase {
     		catch (InvalidCoordsException e) {
     			// should get here
     		}
-    		assertEquals(e4, b1.location);
+    		assertEquals(origCoords, b1.location);	// <-- should not have moved
     	}
+    }
+    
+    public void testMoveToOccupiedTile() throws Exception {
+    	ChessCoords origCoords = new ChessCoords("C", 8);
+    	Bishop b1 = (Bishop) cb.getChessPieceAt(origCoords);
     	
     	//occupied cell - valid move (should throw CoordsOccupied)
-    	Pawn p1 = new Pawn(ChessPiece.BLACK, f5);
-    	cb.pieces.put(f5, p1);
+    	Pawn p1 = (Pawn) cb.getChessPieceAt("B", 7);
     	try {
     		b1.moveTo(p1.location);
     		fail("failed to throw expected exception");
@@ -188,9 +199,10 @@ public class TestBishop extends TestCase {
     	catch (CoordsOccupiedException e) {
     		//should get here
     	}
+    	assertEquals(origCoords, b1.location);	// <-- should not have moved
     	
 		//occupied cell - illegal move (should throw IllegalMove)
-    	Pawn p2 = new Pawn(ChessPiece.WHITE, g7);
+    	Pawn p2 = (Pawn) cb.getChessPieceAt("E", 7);
     	try {
     		b1.moveTo(p2.location);
     		fail("failed to throw expected exception");
@@ -198,5 +210,10 @@ public class TestBishop extends TestCase {
     	catch (IllegalMoveException e) {
     		//should get here
     	}
+    }
+    
+    public void resetBoard() {
+    	ChessGame.INSTANCE.initialize();  // <-- resets the board
+    	this.cb = ChessGame.INSTANCE.getChessBoard();
     }
 }
