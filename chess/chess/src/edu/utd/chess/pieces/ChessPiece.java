@@ -92,6 +92,7 @@ public abstract class ChessPiece {
 	 * @throws InvalidCoordsException if the coords provided were invalid
 	 * @throws CoordsOccupiedException if the coords provided are occupied by 
 	 * another chess piece
+	 * @throws IllegalMoveException if the move requested is not legal for this piece
 	 */
 	public void moveTo(ChessCoords newLocation)
 		throws 
@@ -107,12 +108,27 @@ public abstract class ChessPiece {
 	    this.location = newLocation;
 	}
 	
+	/**
+	 * Behaves the same as <code>moveTo(ChessCoords)</code>
+	 * @see ChessPiece#moveTo(ChessCoords)
+	 * @param col String for column, i.e. A - H
+	 * @param row int for row, i.e. 1-8
+	 */
+	public void moveTo(String col, int row) 
+		throws
+			InvalidCoordsException,
+			CoordsOccupiedException,
+			IllegalMoveException
+	{
+		this.moveTo(new ChessCoords(col, row));
+	}
+	
 	public String toString() {
 	    return "Chess Piece, Location: " + this.location
 	    + " , Class: " + this.getClass();
 	}
 	
-	//TODO document
+	//FIXME implement a real one!
 	public int hashCode() {
 		return 41;
 	}

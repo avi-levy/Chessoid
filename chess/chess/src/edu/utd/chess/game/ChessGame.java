@@ -10,6 +10,7 @@ import edu.utd.chess.exceptions.HomicideException;
 import edu.utd.chess.exceptions.IllegalMoveException;
 import edu.utd.chess.exceptions.InvalidCoordsException;
 import edu.utd.chess.exceptions.SuicideException;
+import edu.utd.chess.exceptions.UnexpectedChessGameException;
 import edu.utd.chess.pieces.Bishop;
 import edu.utd.chess.pieces.ChessPiece;
 import edu.utd.chess.pieces.King;
@@ -42,6 +43,7 @@ public class ChessGame {
 	 */
 	public void initialize() {
 		chessBoard = new ChessBoard(createDefaultChessSet());
+		
 	}
 	
 	/**
@@ -55,7 +57,7 @@ public class ChessGame {
 	 * Creates a set of chess pieces (i.e. an ArrayList) in the standard 
 	 * 32 piece configuration (16 black, 16 white).
 	 * @return <code>List</code> of <code>ChessPiece</code>s
-	 */ //TODO: test me!
+	 */ //TODO: I should probably return a list or something nowdays.
 	public HashMap<ChessCoords, ChessPiece> createDefaultChessSet() {
 		HashMap<ChessCoords, ChessPiece> pieces = new HashMap<ChessCoords, ChessPiece>(32);
 		
@@ -145,11 +147,12 @@ public class ChessGame {
 	 * @throws HomicideException if both attacker and victim are on the
 	 * same side.
 	 */
-	public void doCapture(ChessPiece attacker, ChessPiece victim) 
+	public void processCapture(ChessPiece attacker, ChessPiece victim) 
 		throws 
 			ChessPieceNotFoundException,
 			SuicideException,
-			HomicideException
+			HomicideException,
+			UnexpectedChessGameException
 	{
 		// validation
 		if (null == this.getChessBoard().getChessPieceAt(attacker.location)) {	//TODO: testme!  is this a bug?  what if coords are null?
@@ -164,37 +167,37 @@ public class ChessGame {
 		if (attacker.alignment.equals(victim.alignment)) {
 			throw new HomicideException();
 		}
+		
 		// kill the victim
-		this.getChessBoard().pieces.remove(victim.location);
-		//FIXME: do we call move() on the piece here or assume caller will do it? I assume the latter
+		this.getChessBoard().removePiece(victim.location);
+		try {
+			this.getChessBoard().movePiece(attacker.location, victim.location);
+		} catch (CoordsOccupiedException e) {
+			throw new UnexpectedChessGameException("Victim's coordinates still occupied after capture!");
+		}
+		//FIXME: do we call move() on the piece here or assume caller will do it? I assume the latter  STALE?
 	}
 	
-	public void doMove(ChessCoords from, ChessCoords to, ChessPiece p) 
+	public void processMove(ChessCoords from, ChessCoords to) 
 		throws 
 			InvalidCoordsException,
 			IllegalMoveException,
 			SuicideException,
 			HomicideException,
-			ChessPieceNotFoundException
+			ChessPieceNotFoundException,
+			UnexpectedChessGameException
 	{
-		ChessPiece piece = getChessBoard().getChessPieceAt(from);
+		
+		// Attempt to move a piece, if the space it's moving to is occupied, attempt to capture the 
+		// piece.
 		try {
-			piece.moveTo(to);
-		}
-		catch (CoordsOccupiedException coe) {
-			// try capture
+			getChessBoard().movePiece(from, to);
+		} catch (CoordsOccupiedException e) {
+			//ChessPiece attacker = getChessBoard().board[from.row][ChessBoard.translateCol(from.column)];
+			//ChessPiece victim = getChessBoard().board[to.row][ChessBoard.translateCol(to.column)];
+			ChessPiece attacker = getChessBoard().getChessPieceAt(from);
 			ChessPiece victim = getChessBoard().getChessPieceAt(to);
-			if (piece.alignment.equals(victim.alignment)) {
-				throw new HomicideException();
-			}
-			if (piece == victim) {
-				throw new SuicideException();
-			}
-			doCapture(piece, victim);	// <-- if this throws exceptions, something is up
-			//FIXME: I think we should be calling move() on the chessPiece here
+			processCapture(attacker, victim);
 		}
-		// update board
-		getChessBoard().pieces.remove(from);
-		getChessBoard().pieces.put(to, piece);
 	}
 }
