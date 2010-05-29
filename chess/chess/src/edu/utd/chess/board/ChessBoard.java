@@ -175,7 +175,7 @@ public class ChessBoard {
 	 */
 	public void removePiece(ChessCoords coords) throws ChessPieceNotFoundException {
 		if (null == board[coords.row-1][translateCol(coords.column)-1]) {
-			throw new ChessPieceNotFoundException("Guy wasn't there");
+			throw new ChessPieceNotFoundException("Guy wasn't there at: " + coords);
 		}
 		board[coords.row-1][translateCol(coords.column)-1] = null;
 	}
@@ -194,7 +194,7 @@ public class ChessBoard {
 		throws ChessPieceNotFoundException, 
 			   CoordsOccupiedException {
 		if (null == board[from.row-1][translateCol(from.column)-1]) {
-			throw new ChessPieceNotFoundException("Guy wasn't there");
+			throw new ChessPieceNotFoundException("Guy wasn't there at: " + from);
 		}
 
 		ChessPiece piece = board[from.row-1][translateCol(from.column)-1];
