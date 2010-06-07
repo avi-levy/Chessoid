@@ -75,6 +75,7 @@ public class TestKing extends TestCase {
     	illegalTargets.add(new ChessCoords("G", 7));
     	illegalTargets.add(new ChessCoords("E", 2));
     	illegalTargets.add(new ChessCoords("C", 3));
+    	illegalTargets.add(new ChessCoords("F", 6));
     	
     	for (ChessCoords coords : illegalTargets) {
     		try {
@@ -84,6 +85,23 @@ public class TestKing extends TestCase {
 	    	}
     		catch (IllegalMoveException e) {
     			// should get here
+    		}
+    	}
+    	
+    	origCoords = new ChessCoords("E", 1);
+    	k1 = cb.getChessPieceAt(origCoords);
+    	
+    	illegalTargets = new ArrayList<ChessCoords>();
+    	illegalTargets.add(new ChessCoords("F", 6));
+    	
+    	for (ChessCoords coords : illegalTargets) {
+    		try {
+    			k1.validateMove(coords);
+    			fail("failed to throw expected IllegalMoveException" +
+    					"for move to coords: " + coords);
+    		}
+    		catch (IllegalMoveException e) {
+    			//should get here
     		}
     	}
     }
@@ -111,7 +129,7 @@ public class TestKing extends TestCase {
     	}
     }
     
-    public void testMoveToValidTargets() throws Exception {
+    public void testMoveTocoordsValidTargets() throws Exception {
     	ChessCoords origCoords = new ChessCoords("E", 8);
     	
     	//valid targets - should be allowed to move by one in all directions
@@ -141,6 +159,7 @@ public class TestKing extends TestCase {
     		}
     	}
     	
+    	resetBoard();
     	//test moving backwards:
     	
     	//remove the pawns blocking the way
@@ -150,11 +169,9 @@ public class TestKing extends TestCase {
 		cb.removePiece("D", 8);
 		cb.removePiece("F", 8);
 		ChessPiece k1 = cb.getChessPieceAt(origCoords);
-		k1.moveTo("E", 7);
-		//move the piece on the board, in "real life", the game will handle this
+		//move the piece on the board
 		cb.movePiece(new ChessCoords("E", 8), new ChessCoords("E", 7));
 		k1.moveTo("E", 8);
-		
     }
     
     public void testMoveToIllegalTargets() throws Exception {

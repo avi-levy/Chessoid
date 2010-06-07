@@ -1,5 +1,6 @@
 package edu.utd.chess.pieces;
 
+import edu.utd.chess.board.ChessBoard;
 import edu.utd.chess.board.ChessCoords;
 import edu.utd.chess.exceptions.CoordsOccupiedException;
 import edu.utd.chess.exceptions.IllegalMoveException;
@@ -25,7 +26,7 @@ public class Pawn extends ChessPiece {
 	 * move diagonally unless capturing.
 	 * @see ChessPiece#validateMove(ChessCoords)
 	 * @param coords target coordinates on the chess board
-	 * @throws InvalidCoordsException
+	 * @throws InvalidCoordsExceptiontestMoveToCoordsOccupiedIllegalTarget
 	 * @throws IllegalMoveException
 	 */
 	@Override
@@ -43,6 +44,13 @@ public class Pawn extends ChessPiece {
 	    		//and capture, then it's an illegal move
 	        	throw new IllegalMoveException();
 	    	}
+	    	//if more than +/- 1 from current location, can't go there
+		     int deltax = Math.abs (
+		    		 ChessBoard.translateCol(this.location.column)
+		    		 - ChessBoard.translateCol(coords.column));
+		     if (deltax > 1) {
+		    	 throw new IllegalMoveException();
+		     }
 	    }
 	    //can't move backwards
 	    if (this.alignment.equals(ChessPiece.BLACK) && coords.row > this.location.row) {
@@ -81,7 +89,7 @@ public class Pawn extends ChessPiece {
 	
 	//TODO document and test
 	public int hashCode() {
-		return 100;
+		return 100;	//FIXME: implement a real one of these
 	}
 	
 	//TODO document and test

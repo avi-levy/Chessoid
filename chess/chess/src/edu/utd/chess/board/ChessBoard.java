@@ -1,9 +1,12 @@
 package edu.utd.chess.board;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import edu.utd.chess.exceptions.ChessPieceNotFoundException;
 import edu.utd.chess.exceptions.CoordsOccupiedException;
+import edu.utd.chess.exceptions.IllegalMoveException;
+import edu.utd.chess.exceptions.InvalidCoordsException;
 import edu.utd.chess.pieces.ChessPiece;
 
 public class ChessBoard {
@@ -15,7 +18,7 @@ public class ChessBoard {
 	public static int COLS = 8;
 
 	/**
-	 * A list of all the ChessPieces currently on the board.
+	 * Internal data structure for the chess board
 	 */
 	public ChessPiece[][] board = new ChessPiece[ROWS][COLS];
 
@@ -26,8 +29,8 @@ public class ChessBoard {
 	 * @param pieces
 	 *            a List of <code>ChessPiece</code>s
 	 */
-	public ChessBoard(HashMap<ChessCoords, ChessPiece> chessSet) {
-		for (ChessPiece piece : chessSet.values()) {
+	public ChessBoard(Collection<ChessPiece> chessSet) {
+		for (ChessPiece piece : chessSet) {
 			ChessCoords coords = piece.location;
 			board[coords.row-1][translateCol(coords.column)-1] = piece;
 		}
@@ -111,7 +114,6 @@ public class ChessBoard {
 	 */
 	public static int translateCol(String col) {
 		// TODO : this breaks if the chess board is not of standard size
-		// TODO : should this be here or in ChessCoords ???
 		int colnum = -1;
 		col = col.toUpperCase();
 		if (col.equals("A")) {
@@ -183,30 +185,42 @@ public class ChessBoard {
 	/**
 	 * Move a piece on the board.  This tells the piece
 	 * at specified location to update its state reflect
-	 * the change to the new location
+	 * the change to the new location, and updates the 
+	 * board's state to reflect the change.
 	 * @param from ChessCoords for source location
 	 * @param to ChessCoords for destination location
 	 * @throws ChessPieceNotFoundException if the source location was empty
 	 * @throws CoordsOccupiedException if there is another chess piece occupying
 	 * the destination location
-	 */
+	 */ //TODO test me!
 	public void movePiece(ChessCoords from, ChessCoords to) 
-		throws ChessPieceNotFoundException, 
-			   CoordsOccupiedException {
+		throws 
+			ChessPieceNotFoundException,
+			InvalidCoordsException,
+			IllegalMoveException,
+			CoordsOccupiedException
+	{
 		if (null == board[from.row-1][translateCol(from.column)-1]) {
 			throw new ChessPieceNotFoundException("Guy wasn't there at: " + from);
 		}
 
 		ChessPiece piece = board[from.row-1][translateCol(from.column)-1];
 
-		if (null != board[to.row-1][translateCol(to.column)-1]) {			
-			throw new CoordsOccupiedException();			
-		} 
+//		if (null != board[to.row-1][translateCol(to.column)-1]) {			
+//			throw new CoordsOccupiedException();			
+//		}
+		
+		if (null != piece) {
+			piece.moveTo(to);
+		}
+		else {
+			throw new ChessPieceNotFoundException("Not found at: " + from);
+		}
 
 		board[from.row-1][translateCol(from.column)-1] = null;
 		board[to.row-1][translateCol(to.column)-1] = piece;
 		
-		piece.location = to;
+//		piece.location = to;
 	}
 	
 	/**
@@ -218,5 +232,28 @@ public class ChessBoard {
 	 */
 	public void removePiece(String col, int row) throws ChessPieceNotFoundException {
 		removePiece(new ChessCoords(col, row));
+	}
+	
+	/**
+	 * Get a collection of all the <code>ChessPiece</code>s currently
+	 * in the game.  Note that this list must be newly constructed 
+	 * each time this method is called (currently builds a collection
+	 * for the internal primitive array), so calling this a lot
+	 * might be kind of slow
+	 * @return Collection of all the chess pieces
+	 */
+	public Collection<ChessPiece> getAllChessPieces() {
+		//TODO there should probably be a piececount state var (maybe per side)
+		//if so, use that here instead of hardcode to 32
+		ArrayList<ChessPiece> pieces = new ArrayList<ChessPiece>(32);
+		for (int row=1; row <= ROWS; row++) {
+			for (int col=1; col <= COLS; col++) {
+				ChessPiece piece = getChessPieceAt(translateCol(col), row);
+				if (null != piece) {
+					pieces.add(piece);
+				}
+			}
+		}
+		return pieces;
 	}
 }

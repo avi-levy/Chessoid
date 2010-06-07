@@ -30,8 +30,8 @@ public class Bishop extends ChessPiece {
 			IllegalMoveException
 	{
 		super.validateMove(coords);
-	     int deltax = Math.abs(this.location.row - coords.row);
-	     int deltay = Math.abs (
+	     int deltay = Math.abs(this.location.row - coords.row);
+	     int deltax = Math.abs (
 	    		 ChessBoard.translateCol(this.location.column)
 	    		 - ChessBoard.translateCol(coords.column));
 	     if (deltax != deltay) {

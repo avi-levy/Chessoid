@@ -1,10 +1,16 @@
 package edu.utd.chess.board;
 
+import java.util.Collection;
+
 import junit.framework.TestCase;
+import edu.utd.chess.exceptions.ChessPieceNotFoundException;
+import edu.utd.chess.exceptions.CoordsOccupiedException;
 import edu.utd.chess.game.ChessGame;
 import edu.utd.chess.pieces.Bishop;
 import edu.utd.chess.pieces.ChessPiece;
+import edu.utd.chess.pieces.King;
 import edu.utd.chess.pieces.Knight;
+import edu.utd.chess.pieces.Pawn;
 import edu.utd.chess.pieces.Queen;
 import edu.utd.chess.pieces.Rook;
 
@@ -105,6 +111,134 @@ public class TestChessBoard extends TestCase {
 		assertEquals(8, ChessBoard.translateCol("H"));
 		assertEquals(1, ChessBoard.translateCol("a"));
 		assertEquals(-1, ChessBoard.translateCol("Z"));
+	}
+	
+	public void testGetAllChessPieces() {
+		Collection<ChessPiece> all = cb.getAllChessPieces();
+		int whitePawns = 0,	whiteRooks = 0,	whiteBishops = 0,
+		whiteKnights = 0, 	whiteKings = 0,	whiteQueens = 0,
+		blackPawns = 0,		blackRooks = 0, blackBishops = 0,
+		blackKnights = 0,	blackKings = 0, blackQueens = 0;
+		for (ChessPiece piece : all) {
+			if (piece.alignment.equals(ChessPiece.WHITE)) {
+				if (piece instanceof Pawn) {
+					whitePawns++;
+				}
+				else if (piece instanceof Rook) {
+					whiteRooks++;
+				}
+				else if (piece instanceof Bishop) {
+					whiteBishops++;
+				}
+				else if (piece instanceof Queen) {
+					whiteQueens++;
+				}
+				else if (piece instanceof King) {
+					whiteKings++;
+				}
+				else if (piece instanceof Knight) {
+					whiteKnights++;
+				}
+			}
+			else if (piece.alignment.equals(ChessPiece.BLACK)) {
+				if (piece instanceof Pawn) {
+					blackPawns++;
+				}
+				else if (piece instanceof Rook) {
+					blackRooks++;
+				}
+				else if (piece instanceof Bishop) {
+					blackBishops++;
+				}
+				else if (piece instanceof Queen) {
+					blackQueens++;
+				}
+				else if (piece instanceof King) {
+					blackKings++;
+				}
+				else if (piece instanceof Knight) {
+					blackKnights++;
+				}
+			}
+		}
+		
+		assertEquals(32, whiteBishops + whiteKings + whiteKnights + whitePawns + whiteQueens + whiteRooks
+				+ blackBishops + blackKings + blackKnights + blackPawns + blackQueens + blackRooks);
+		assertEquals(8, whitePawns);	assertEquals(8, blackPawns);
+		assertEquals(2, whiteRooks);	assertEquals(2, blackRooks);
+		assertEquals(2, whiteBishops);	assertEquals(2, blackBishops);
+		assertEquals(2, whiteKnights);	assertEquals(2, blackKnights);
+		
+	}
+	
+	public void testRemovePieceChessCoords() throws Exception {
+		ChessPiece p = cb.getChessPieceAt("D", 2);
+		cb.removePiece(p.location);
+		assertFalse(cb.getAllChessPieces().contains(p));
+		try {
+			cb.removePiece(p.location);
+			fail("failed to throw expected ChessPieceNotFound");
+		}
+		catch (ChessPieceNotFoundException x) {
+		}
+	}
+	
+	public void testRemovePieceStringString() throws Exception {
+		ChessPiece p = cb.getChessPieceAt("D", 2);
+		cb.removePiece("D", 2);
+		assertFalse(cb.getAllChessPieces().contains(p));
+		try {
+			cb.removePiece("D", 2);
+			fail("failed to throw expected ChessPieceNotFound");
+		}
+		catch (ChessPieceNotFoundException x) {
+		}
+	}
+	
+	public void testMovePieceFromOccupiedToEmpty() throws Exception {
+		ChessPiece piece = cb.getChessPieceAt("A", 7);
+		ChessCoords to = new ChessCoords("A", 6);
+		cb.movePiece(piece.location, to);
+		assertEquals(to, piece.location);
+	}
+	
+	public void testMovePieceFromOccupiedToOccupied() throws Exception {
+		ChessCoords orig = new ChessCoords("A", 8);
+		ChessPiece piece = cb.getChessPieceAt(orig);
+		ChessCoords to = new ChessCoords("A", 7);
+		try {
+			cb.movePiece(piece.location, to);
+			fail("failed to throw expected coords occupied");
+		}
+		catch (CoordsOccupiedException x) {
+		}
+		assertEquals(orig, piece.location);
+	}
+	
+	public void testMovePieceFromEmptyToEmpty() throws Exception {
+		ChessCoords empty1 = new ChessCoords("A", 5);
+		ChessCoords empty2 = new ChessCoords("B", 5);
+		try {
+			cb.movePiece(empty1, empty2);
+			fail("failed to throw expected ChessPieceNotFound");
+		}
+		catch (ChessPieceNotFoundException x) {
+		}
+	}
+	
+	public void testMovePieceFromEmptyToOccupied() throws Exception {
+		ChessCoords orig = new ChessCoords("A", 7);
+		ChessPiece p = cb.getChessPieceAt(orig);
+		ChessCoords empty = new ChessCoords("H", 5);
+		assertNull(cb.getChessPieceAt(empty));
+		try {
+			cb.movePiece(empty, p.location);
+			fail("failed to throw expected ChessPieceNotFound");
+		}
+		catch (ChessPieceNotFoundException x) {
+		}
+		assertNull(cb.getChessPieceAt(empty));
+		assertEquals(orig, p.location);
 	}
 
 }

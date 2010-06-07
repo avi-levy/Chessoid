@@ -212,6 +212,19 @@ public class TestBishop extends TestCase {
     	}
     }
     
+    public void testMoveToOccupiedTileIllegalMove() throws Exception {
+    	Bishop b = (Bishop) cb.getChessPieceAt("C", 8);
+    	try {
+    		//occupied cell - illegal move (should throw IllegalMove)
+    		b.moveTo("C", 7);
+    		fail("failed to throw illegal move");
+    	}
+    	catch (IllegalMoveException x) {
+    		//should get here
+    	}
+    	
+    }
+    
     public void resetBoard() {
     	ChessGame.INSTANCE.initialize();  // <-- resets the board
     	this.cb = ChessGame.INSTANCE.getChessBoard();

@@ -13,180 +13,140 @@ public class TestRook extends TestCase {
     
     
     public void setUp() {
-        cb = ChessGame.INSTANCE.getChessBoard();
-        cb.pieces.clear();
+    	resetBoard();
     }
     
     public void tearDown() {
-        cb.pieces.clear();
+        cb = null;
+    }    
+    
+    public void testValidateMoveValidTargets() throws Exception {
+    	Rook r = (Rook) cb.getChessPieceAt("A", 8);
+    	//get rid of pawn
+    	cb.removePiece("A", 7);
+    	cb.movePiece(r.location, new ChessCoords("A", 6));
+    	assertEquals(new ChessCoords("A", 6), r.location);
+    	//down
+    	r.validateMove(new ChessCoords("A", 3));
+    	//up
+    	r.validateMove(new ChessCoords("A", 8));
+    	//right
+    	cb.movePiece(r.location, new ChessCoords("F", 6));
+    	assertEquals(new ChessCoords("F", 6), r.location);
+    	//left
+    	r.validateMove(new ChessCoords("C", 6));
     }
     
-    public void testValidateMove() throws Exception {
-        ChessCoords a1 = new ChessCoords("A", 1);
-        Rook r1 = new Rook(ChessPiece.BLACK, a1);
-        //move forward by 1
-        ChessCoords a2 = new ChessCoords("A", 2);
-        r1.validateMove(a2);
-        //move forward by 3
-        ChessCoords a4 = new ChessCoords("A", 4);
-        r1.validateMove(a4);
-        //move right by 1
-        ChessCoords b1 = new ChessCoords("B", 1);
-        r1.validateMove(b1);
-        //move right by 3
-        ChessCoords d1 = new ChessCoords("D", 1);
-        r1.validateMove(d1);
-        
-        //try to move illegally (not straight or diagonal)
-        ChessCoords d2 = new ChessCoords("D", 2);
-        try {
-            r1.validateMove(d2);
-            fail("failed to throw expected exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        // try to move diagonally (illegal)
-        ChessCoords b2 = new ChessCoords("B", 2);
-        try {
-            r1.validateMove(b2);
-            fail ("failed to thow expected illegal move exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        ChessCoords e5 = new ChessCoords("E", 5);
-        try {
-            r1.validateMove(e5);
-            fail ("failed to thow expected illegal move exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        // validate move to current location
-        try {
-            r1.validateMove(r1.location);
-            fail("failed to throw expected exception, "
-                    + "move to current location");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
+    public void testValidateMoveInvalidTargets() throws Exception {
+    	Rook r = (Rook) cb.getChessPieceAt("A", 8);
+    	//get rid of pawn
+    	cb.removePiece("A", 7);
+    	//move rook to a good testing location
+    	cb.movePiece(r.location, new ChessCoords("A", 6));
+    	cb.movePiece(r.location, new ChessCoords("C", 6));
+    	assertEquals(new ChessCoords("C", 6), r.location);
+    	try {
+    		r.validateMove(new ChessCoords("H", 57));
+    		fail("failed throw expected invalid coords");
+    	}
+    	catch (InvalidCoordsException x) {
+    		//should get here
+    	}
     }
     
-    public void testMoveTo() throws Exception {
-        ChessCoords a1 = new ChessCoords("A", 1);
-        ChessCoords h1 = new ChessCoords("H", 1);
-        Rook r1 = new Rook(ChessPiece.BLACK, a1);
-        Rook r2 = new Rook(ChessPiece.BLACK, h1);
-        this.cb.pieces.put(a1, r1);
-        this.cb.pieces.put(h1, r2);
-       
-        // move forward by one (legal)
-        ChessCoords a2 = new ChessCoords("A", 2);
-        r1.moveTo(a2);
-        
-        // move to occupied location (illegal)
-        try {
-            r1.moveTo(r2.location);
-            fail("failed to throw expected illegal move exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        // make sure we really didn't move
-        assertEquals(a2, r1.location);
-        
-        // invalid coords
-        ChessCoords zz92 = new ChessCoords("ZZ", 92);
-        try {
-            r2.moveTo(zz92);
-            fail("failed to throw expected ivalid coords exception");
-        }
-        catch (InvalidCoordsException e) {
-            //should get here
-        }
-        
-        //illegal moves
-        ChessCoords a8 = new ChessCoords("a", 8);
-        try {
-            r2.moveTo(a8);
-            fail("failed to throw expected illegal move exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        try {
-            r1.moveTo(r1.location);
-            fail("failed to throw illegal move to current coords");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        
-        //make sure we're where we think we are (A2)
-        assertEquals(new ChessCoords("A", 2), r1.location);
-        ChessCoords c3 = new ChessCoords("C", 3);
-        try {
-            r1.moveTo(c3);
-            fail("failed to throw expected illegal move exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        
-        //occupied position
-        r2.location = new ChessCoords("b", 2);
-        try {
-            r1.moveTo(r2.location);
-            fail("failed to throw expected occupied exception");
-        }
-        catch (CoordsOccupiedException e) {
-            //should get here
-        }
-     
-        // try to move diagonally (illegal)
-        r1 = new Rook(ChessPiece.BLACK, a1);
-        ChessCoords b2 = new ChessCoords("B", 2);
-        try {
-            r1.moveTo(b2);
-            fail ("failed to thow expected illegal move exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        r1 = new Rook(ChessPiece.BLACK, a1);
-        ChessCoords e5 = new ChessCoords("E", 5);
-        try {
-            r1.moveTo(e5);
-            fail ("failed to thow expected illegal move exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        
-        // test move move to current location (illegal)
-        r1 = new Rook(ChessPiece.BLACK, a1);
-        try {
-            r1.moveTo(r1.location);
-            fail("failed to throw expected exception, "
-                    + "move to current location");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
-        
-        //try to move illegally (not straight or diagonal)
-        ChessCoords d2 = new ChessCoords("D", 2);
-        r1 = new Rook(ChessPiece.BLACK, a1);
-        try {
-            r1.moveTo(d2);
-            fail("failed to throw expected exception");
-        }
-        catch (IllegalMoveException e) {
-            //should get here
-        }
+    public void testValidateMoveIllegalTargets() throws Exception {
+    	Rook r = (Rook) cb.getChessPieceAt("A", 8);
+    	//get rid of pawn
+    	cb.removePiece("A", 7);
+    	//move rook to a good testing location
+    	cb.movePiece(r.location, new ChessCoords("A", 6));
+    	cb.movePiece(r.location, new ChessCoords("C", 6));
+    	assertEquals(new ChessCoords("C", 6), r.location);
+    	try {
+    		r.validateMove(new ChessCoords("E", 5));  // <-- illegal diagonal
+    		fail("failed throw expected illegal move");
+    	}
+    	catch (IllegalMoveException x) {
+    		//should get here
+    	}
     }
     
+    public void testMoveToValidTargets() throws Exception {
+    	Rook r = (Rook) cb.getChessPieceAt("A", 8);
+    	//get rid of pawn
+    	cb.removePiece("A", 7);
+    	cb.movePiece(r.location, new ChessCoords("A", 6));
+    	assertEquals(new ChessCoords("A", 6), r.location);
+    	//down
+    	cb.movePiece(r.location, new ChessCoords("A", 3));
+    	assertEquals(new ChessCoords("A", 3), r.location);
+    	//up
+    	cb.movePiece(r.location, new ChessCoords("A", 8));
+    	assertEquals(new ChessCoords("A", 8), r.location);
+    	//right (move back down first)
+    	cb.movePiece(r.location, new ChessCoords("A", 5));
+    	assertEquals(new ChessCoords("A", 5), r.location);
+    	cb.movePiece(r.location, new ChessCoords("D", 5));
+    	assertEquals(new ChessCoords("D", 5), r.location);
+    	//left
+    	cb.movePiece(r.location, new ChessCoords("B", 5));
+    	assertEquals(new ChessCoords("B", 5), r.location);
+    }
     
+    public void testMoveToInvalidTargets() throws Exception {
+    	Rook r = (Rook) cb.getChessPieceAt("A", 8);
+    	//get rid of pawn
+    	cb.removePiece("A", 7);
+    	cb.movePiece(r.location, new ChessCoords("A", 6));
+    	assertEquals(new ChessCoords("A", 6), r.location);
+    	try {
+    		r.moveTo("X", 86);
+    		fail("failed to throw expected invalid coords");
+    	}
+    	catch (InvalidCoordsException x) {
+    		//should get here
+    	}
+    }
+    
+    public void testMoveToIllegalTargets() throws Exception {
+    	Rook r = (Rook) cb.getChessPieceAt("A", 8);
+    	//get rid of pawn
+    	cb.removePiece("A", 7);
+    	cb.movePiece(r.location, new ChessCoords("A", 6));
+    	assertEquals(new ChessCoords("A", 6), r.location);
+    	try {
+    		r.moveTo("C", 5);
+    		fail("failed to throw expected exception");
+    	}
+    	catch (IllegalMoveException x) {
+    		//should get here
+    	}
+    }
+    
+    public void testMoveToCoordsOccupied() throws Exception {
+    	Rook r = (Rook) cb.getChessPieceAt("A", 8);
+    	try {
+    		r.moveTo("A", 7);
+    		fail("failed to throw coords occupied");
+    	}
+    	catch (CoordsOccupiedException x) {
+    		//should get here
+    	}
+    }
+    
+    public void testMoveToCoordsOccupiedIllegalMove() throws Exception {
+    	Rook r = (Rook) cb.getChessPieceAt("A", 8);
+    	try {
+    		r.moveTo("H", 7);
+    		fail("failed to throw illegal move");
+    	}
+    	catch (IllegalMoveException x) {
+    		//should get here
+    	}
+    }
+    
+    public void resetBoard() {
+    	ChessGame.INSTANCE.initialize();  // <-- resets the board
+    	this.cb = ChessGame.INSTANCE.getChessBoard();
+    }
 }

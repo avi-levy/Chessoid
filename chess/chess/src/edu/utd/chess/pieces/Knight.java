@@ -17,7 +17,7 @@ public class Knight extends ChessPiece {
     }
     
     /**
-     * Knights can move x=(=/-)2,y=(+/-)1 or 
+     * Knights can move x=(+/-)2,y=(+/-)1 or 
      * x=(+/-)1,y=(+/-)2 places
      * from their current location.
      * @param coords target coordinates on the chess board

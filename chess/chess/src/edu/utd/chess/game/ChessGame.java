@@ -1,6 +1,7 @@
 package edu.utd.chess.game;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import edu.utd.chess.board.ChessBoard;
 import edu.utd.chess.board.ChessCoords;
@@ -10,7 +11,7 @@ import edu.utd.chess.exceptions.HomicideException;
 import edu.utd.chess.exceptions.IllegalMoveException;
 import edu.utd.chess.exceptions.InvalidCoordsException;
 import edu.utd.chess.exceptions.SuicideException;
-import edu.utd.chess.exceptions.UnexpectedChessGameException;
+import edu.utd.chess.exceptions.CoreChessGameException;
 import edu.utd.chess.pieces.Bishop;
 import edu.utd.chess.pieces.ChessPiece;
 import edu.utd.chess.pieces.King;
@@ -40,6 +41,7 @@ public class ChessGame {
 	
 	/**
 	 * (re-) initialize the chess game, i.e. start a new game.
+	 * Resets the chessboard to an initial state.
 	 */
 	public void initialize() {
 		chessBoard = new ChessBoard(createDefaultChessSet());
@@ -57,9 +59,9 @@ public class ChessGame {
 	 * Creates a set of chess pieces (i.e. an ArrayList) in the standard 
 	 * 32 piece configuration (16 black, 16 white).
 	 * @return <code>List</code> of <code>ChessPiece</code>s
-	 */ //TODO: I should probably return a list or something nowdays.
-	public HashMap<ChessCoords, ChessPiece> createDefaultChessSet() {
-		HashMap<ChessCoords, ChessPiece> pieces = new HashMap<ChessCoords, ChessPiece>(32);
+	 */
+	public Collection<ChessPiece> createDefaultChessSet() {
+		ArrayList<ChessPiece> pieces = new ArrayList<ChessPiece>(32);
 		
 		//black pawns
 		byte ascii[] = {65};
@@ -67,33 +69,33 @@ public class ChessGame {
 			//A7 - H7
 			ChessCoords coords = new ChessCoords(new String(ascii), 7);
 			ascii[0] = (byte) (ascii[0] + (byte) 1);
-			pieces.put(coords, new Pawn(ChessPiece.BLACK, coords));
+			pieces.add(new Pawn(ChessPiece.BLACK, coords));
 		}
 		
 		//the rest
 		ChessCoords a8 = new ChessCoords("A", 8);
-		pieces.put(a8, new Rook(ChessPiece.BLACK, a8));
+		pieces.add(new Rook(ChessPiece.BLACK, a8));
 		
 		ChessCoords b8 = new ChessCoords("B", 8);
-		pieces.put(b8, new Knight(ChessPiece.BLACK, b8));
+		pieces.add(new Knight(ChessPiece.BLACK, b8));
 		
 		ChessCoords c8 = new ChessCoords("C", 8);
-		pieces.put(c8, new Bishop(ChessPiece.BLACK, c8));
+		pieces.add(new Bishop(ChessPiece.BLACK, c8));
 		
 		ChessCoords d8 = new ChessCoords("D", 8);
-		pieces.put(d8, new Queen(ChessPiece.BLACK, d8));
+		pieces.add(new Queen(ChessPiece.BLACK, d8));
 		
 		ChessCoords e8 = new ChessCoords("E", 8);
-		pieces.put(e8, new King(ChessPiece.BLACK, e8));
+		pieces.add(new King(ChessPiece.BLACK, e8));
 		
 		ChessCoords f8 = new ChessCoords("F", 8);
-		pieces.put(f8, new Bishop(ChessPiece.BLACK, f8));
+		pieces.add(new Bishop(ChessPiece.BLACK, f8));
 		
 		ChessCoords g8 = new ChessCoords("G", 8);
-		pieces.put(g8, new Knight(ChessPiece.BLACK, g8));
+		pieces.add(new Knight(ChessPiece.BLACK, g8));
 		
 		ChessCoords h8 = new ChessCoords("H", 8);
-		pieces.put(h8, new Rook(ChessPiece.BLACK, h8));
+		pieces.add(new Rook(ChessPiece.BLACK, h8));
 		
 		//white pawns
 		byte ascii2[] = {65};
@@ -101,33 +103,33 @@ public class ChessGame {
 			//A2 - H2
 			ChessCoords coords = new ChessCoords(new String(ascii2), 2);
 			ascii2[0] = (byte) (ascii2[0] + (byte) 1);
-			pieces.put(coords, new Pawn(ChessPiece.WHITE, coords));
+			pieces.add(new Pawn(ChessPiece.WHITE, coords));
 		}
 		
 		//the rest
 		ChessCoords a1 = new ChessCoords("A", 1);
-		pieces.put(a1, new Rook(ChessPiece.WHITE, a1));
+		pieces.add(new Rook(ChessPiece.WHITE, a1));
 		
 		ChessCoords b1_coords = new ChessCoords("B", 1);
-		pieces.put(b1_coords, new Knight(ChessPiece.WHITE, b1_coords));
+		pieces.add(new Knight(ChessPiece.WHITE, b1_coords));
 		
 		ChessCoords c1 = new ChessCoords("C", 1);
-		pieces.put(c1, new Bishop(ChessPiece.WHITE, c1));
+		pieces.add(new Bishop(ChessPiece.WHITE, c1));
 		
 		ChessCoords d1 = new ChessCoords("D", 1);
-		pieces.put(d1, new Queen(ChessPiece.WHITE, d1));
+		pieces.add(new Queen(ChessPiece.WHITE, d1));
 		
 		ChessCoords e1 = new ChessCoords("E", 1);
-		pieces.put(e1, new King(ChessPiece.WHITE, e1));
+		pieces.add(new King(ChessPiece.WHITE, e1));
 		
 		ChessCoords f1 = new ChessCoords("F", 1);
-		pieces.put(f1, new Bishop(ChessPiece.WHITE, f1));
+		pieces.add(new Bishop(ChessPiece.WHITE, f1));
 		
 		ChessCoords g1 = new ChessCoords("G", 1);
-		pieces.put(g1, new Knight(ChessPiece.WHITE, g1));
+		pieces.add(new Knight(ChessPiece.WHITE, g1));
 		
 		ChessCoords h1 = new ChessCoords("H", 1);
-		pieces.put(h1, new Rook(ChessPiece.WHITE, h1));
+		pieces.add(new Rook(ChessPiece.WHITE, h1));
 		
 		return pieces;
 	}
@@ -143,16 +145,19 @@ public class ChessGame {
 	 * @param victim
 	 * @throws ChessPieceNotFoundException if one of the pieces doesn't
 	 * exist on the ChessBoard
-	 * @throws SuicdeException if the victim and the attacker are the same
+	 * @throws SuicideException if the victim and the attacker are the same piece
 	 * @throws HomicideException if both attacker and victim are on the
 	 * same side.
+	 * @throws CoreChessGameException if something goes horribly wrong
 	 */
 	public void processCapture(ChessPiece attacker, ChessPiece victim) 
 		throws 
 			ChessPieceNotFoundException,
+			InvalidCoordsException,
+			IllegalMoveException,
 			SuicideException,
 			HomicideException,
-			UnexpectedChessGameException
+			CoreChessGameException
 	{
 		// validation
 		if (null == this.getChessBoard().getChessPieceAt(attacker.location)) {	//TODO: testme!  is this a bug?  what if coords are null?
@@ -172,29 +177,39 @@ public class ChessGame {
 		this.getChessBoard().removePiece(victim.location);
 		try {
 			this.getChessBoard().movePiece(attacker.location, victim.location);
-		} catch (CoordsOccupiedException e) {
-			throw new UnexpectedChessGameException("Victim's coordinates still occupied after capture!");
 		}
-		//FIXME: do we call move() on the piece here or assume caller will do it? I assume the latter  STALE?
+		catch (CoordsOccupiedException e) {
+			throw new CoreChessGameException("Victim's coordinates still occupied after capture!");
+		}
 	}
 	
+	/**
+	 * Attempt to move a piece, if the space it's moving to is occupied, 
+	 * attempt to capture the piece.
+	 * @param from ChessCoords to move from
+	 * @param to ChessCoords to move to
+	 * @throws InvalidCoordsException if either 'from' ChessCoords or 'to'
+	 * ChessCoords are invalid
+	 * @throws IllegalMoveException if the requested move constitutes an illegal move
+	 * for the piece
+	 * @throws SuicideException if 'from' and 'to' are the same location
+	 * @throws HomicideException if the piece at 'from' and 'to' are on the same side
+	 * @throws ChessPieceNotFoundException if the 'from' piece does not exist
+	 * @throws CoreChessGameException if something goes horribly wrong
+	 */
 	public void processMove(ChessCoords from, ChessCoords to) 
-		throws 
+		throws
 			InvalidCoordsException,
 			IllegalMoveException,
 			SuicideException,
 			HomicideException,
 			ChessPieceNotFoundException,
-			UnexpectedChessGameException
+			CoreChessGameException
 	{
-		
-		// Attempt to move a piece, if the space it's moving to is occupied, attempt to capture the 
-		// piece.
 		try {
 			getChessBoard().movePiece(from, to);
-		} catch (CoordsOccupiedException e) {
-			//ChessPiece attacker = getChessBoard().board[from.row][ChessBoard.translateCol(from.column)];
-			//ChessPiece victim = getChessBoard().board[to.row][ChessBoard.translateCol(to.column)];
+		}
+		catch (CoordsOccupiedException e) {
 			ChessPiece attacker = getChessBoard().getChessPieceAt(from);
 			ChessPiece victim = getChessBoard().getChessPieceAt(to);
 			processCapture(attacker, victim);

@@ -1,7 +1,6 @@
 package com.chessoid.app;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -18,6 +17,7 @@ import com.chessoid.ui.Msg;
 import edu.utd.chess.board.ChessBoard;
 import edu.utd.chess.board.ChessCoords;
 import edu.utd.chess.exceptions.ChessPieceNotFoundException;
+import edu.utd.chess.exceptions.CoreChessGameException;
 import edu.utd.chess.exceptions.HomicideException;
 import edu.utd.chess.exceptions.IllegalMoveException;
 import edu.utd.chess.exceptions.InvalidCoordsException;
@@ -107,7 +107,7 @@ public class ChessoidMain extends Activity {
     				ChessPiece victim = piece;
     				try {
     					// doMove() will try a capture if possible
-    					ChessGame.INSTANCE.doMove(attacker.location, victim.location, null);
+    					ChessGame.INSTANCE.processMove(attacker.location, victim.location);
     					tile.setChessPiece(attacker);
     					clipboard = null;
     				}
@@ -126,6 +126,9 @@ public class ChessoidMain extends Activity {
     				catch (ChessPieceNotFoundException cpnfe) {
     					updateStatusView(Msg.BUG);
     				}
+    				catch (CoreChessGameException ccge) {
+    					updateStatusView(Msg.BUG);
+    				}
     			}
     		}
     		else {
@@ -135,7 +138,7 @@ public class ChessoidMain extends Activity {
 	    				//try to drop piece from clipboard at new tile
 	    				try {
 	    					//queuedPiece.moveTo(tile.getChessCoords());
-	    					ChessGame.INSTANCE.doMove(queuedPiece.location, tile.getChessCoords(), queuedPiece);
+	    					ChessGame.INSTANCE.processMove(queuedPiece.location, tile.getChessCoords());
 	    					
 	    					tile.setChessPiece(queuedPiece);
 		    				clipboard.setChessPiece(null);	// <-- clear the previous tile
@@ -157,6 +160,9 @@ public class ChessoidMain extends Activity {
 	    				}
 	    				catch (HomicideException he) {
 	    					updateStatusView(Msg.HOMICIDE);
+	    				}
+	    				catch (CoreChessGameException ccge) {
+	    					updateStatusView(Msg.BUG);
 	    				}
 	    			}
     			}
@@ -219,10 +225,7 @@ public class ChessoidMain extends Activity {
      * Set up the chess pieces in the default position
      */
     public void initChessBoard() {
-    	HashMap<ChessCoords, ChessPiece> chessSet = ChessGame.INSTANCE.getChessBoard().pieces; 
-    	for (ChessTileView tile : chessTiles) {
-    		tile.setChessPiece(chessSet.get(tile.getChessCoords()));
-    	}
+    	
     }
     
     public TextView getStatusView() {
