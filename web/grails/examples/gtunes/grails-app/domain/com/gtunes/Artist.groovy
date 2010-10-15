@@ -9,4 +9,3 @@ class Artist {
     	name(blank:false)
     }
 }
-

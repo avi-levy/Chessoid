@@ -7,6 +7,8 @@
         <g:javascript library="application" />
     </head>
     <body>
+
+        <!-- LOGIN PAGE -->
 		<div id="loginBox" class="loginBox">
 			<g:if test="${session?.user}">
 				<div style="margin-top:20px">
@@ -15,21 +17,40 @@
 						<g:link controller="user" action="logout">Logout</g:link><br/>
 					</div>
 					Welcome back
+					<span id="userFirstName">${session?.user?.firstName}!</span>
+					<br/><br/>
+					You have purchased (${session.user.purchasedSongs?.size() ?: 0}) songs.<br/>
 				</div>
 			</g:if>
 			<g:else>
-			</g:/else>
+                <g:form
+                    name="loginForm"
+                    url="[controller:'user', action:'login']">
+                     <div>Username:</div>
+                     <g:textField name="login"></g:textField>
+                     <div>Password:</div>
+                     <g:passwordField name="password" />
+                     <input type="submit" value="Login" />
+                </g:form>
+                <g:renderErrors bean="${loginCmd}"></g:renderErrors>
+			</g:else>
 		</div>
 
-    	<!-- original
-
-        <div id="spinner" class="spinner" style="display:none;">
-            <img src="${resource(dir:'images',file:'spinner.gif')}" alt="${message(code:'spinner.alt',default:'Loading...')}" />
+		<!-- USER REGISTRATION NAV LINK -->
+        <div id="navPane">
+            <g:if test="${session.user}">
+                <ul>
+                    <li><g:link contorller="user" action="music">My Music</g:link></li>
+                    <li><g:link controller="store" action="shop">The Store</g:link></li>
+                </ul>
+            </g:if>
+            <g:else>
+                <div id="registerPane">
+                    Need an account?
+                    <g:link controller="user" action="register">Signup here</g:link>.
+                </div>
+            </g:else>
         </div>
-        <div id="grailsLogo"><a href="http://grails.org"><img src="${resource(dir:'images',file:'grails_logo.png')}" alt="Grails" border="0" /></a></div>
-        <g:layoutBody />
-
-        -->
 
     </body>
 </html>

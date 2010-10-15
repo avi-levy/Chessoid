@@ -53,4 +53,3 @@ class AlbumCreateCommand {
 		return album
 	}
 }
-

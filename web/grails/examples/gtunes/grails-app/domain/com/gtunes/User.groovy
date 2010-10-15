@@ -9,11 +9,10 @@ class User {
 
 	static hasMany = [purchasedSongs:Song]
 
-    static constraints = {
-    	login blank:false, size:5..15, matches:/[\S]+/, unique:true
-    	password blank:false, size:5..15, matches:/[\S]+/
-    	firstName blank:false
-    	lastName blank:false
-    }
+	static constraints = {
+		login blank:false, size:5..15, matches:/[\S]+/, unique:true
+		password blank:false, size:5..15, matches:/[\S]+/
+		firstName blank:false
+		lastName blank:false
+	}
 }
-

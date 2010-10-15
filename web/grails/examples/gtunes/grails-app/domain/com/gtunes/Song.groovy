@@ -20,4 +20,3 @@ class Song {
     	return title
     }
 }
-
