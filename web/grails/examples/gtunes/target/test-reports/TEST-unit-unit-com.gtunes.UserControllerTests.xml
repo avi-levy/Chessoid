@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" hostname="tgn-ub-dsk-64" name="com.gtunes.UserControllerTests" tests="7" time="1.291" timestamp="2010-10-15T01:30:42">
+  <properties />
+  <testcase classname="com.gtunes.UserControllerTests" name="testPasswordsDontMatch" time="1.017" />
+  <testcase classname="com.gtunes.UserControllerTests" name="testRegistrationSuccess" time="0.098" />
+  <testcase classname="com.gtunes.UserControllerTests" name="testLoginTooShort" time="0.02" />
+  <testcase classname="com.gtunes.UserControllerTests" name="testRegistrationFailedEmptyLogin" time="0.019" />
+  <testcase classname="com.gtunes.UserControllerTests" name="testLoginUserNotFound" time="0.07" />
+  <testcase classname="com.gtunes.UserControllerTests" name="testLoginPasswordInvalid" time="0.021" />
+  <testcase classname="com.gtunes.UserControllerTests" name="testLoginSucess" time="0.018" />
+  <system-out><![CDATA[--Output from testPasswordsDontMatch--
+--Output from testRegistrationSuccess--
+--Output from testLoginTooShort--
+--Output from testRegistrationFailedEmptyLogin--
+--Output from testLoginUserNotFound--
+--Output from testLoginPasswordInvalid--
+--Output from testLoginSucess--
+]]></system-out>
+  <system-err><![CDATA[--Output from testPasswordsDontMatch--
+--Output from testRegistrationSuccess--
+--Output from testLoginTooShort--
+--Output from testRegistrationFailedEmptyLogin--
+--Output from testLoginUserNotFound--
+--Output from testLoginPasswordInvalid--
+--Output from testLoginSucess--
+]]></system-err>
+</testsuite>

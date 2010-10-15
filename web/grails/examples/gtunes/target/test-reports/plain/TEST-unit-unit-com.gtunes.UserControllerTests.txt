@@ -1,0 +1,28 @@
+Testsuite: com.gtunes.UserControllerTests
+Tests run: 7, Failures: 0, Errors: 0, Time elapsed: 1.291 sec
+------------- Standard Output ---------------
+--Output from testPasswordsDontMatch--
+--Output from testRegistrationSuccess--
+--Output from testLoginTooShort--
+--Output from testRegistrationFailedEmptyLogin--
+--Output from testLoginUserNotFound--
+--Output from testLoginPasswordInvalid--
+--Output from testLoginSucess--
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+--Output from testPasswordsDontMatch--
+--Output from testRegistrationSuccess--
+--Output from testLoginTooShort--
+--Output from testRegistrationFailedEmptyLogin--
+--Output from testLoginUserNotFound--
+--Output from testLoginPasswordInvalid--
+--Output from testLoginSucess--
+------------- ---------------- ---------------
+
+Testcase: testPasswordsDontMatch took 1.018 sec
+Testcase: testRegistrationSuccess took 0.098 sec
+Testcase: testLoginTooShort took 0.02 sec
+Testcase: testRegistrationFailedEmptyLogin took 0.019 sec
+Testcase: testLoginUserNotFound took 0.071 sec
+Testcase: testLoginPasswordInvalid took 0.021 sec
+Testcase: testLoginSucess took 0.018 sec
