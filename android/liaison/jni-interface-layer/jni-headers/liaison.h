@@ -23,6 +23,30 @@ JNIEXPORT void JNICALL Java_com_chessoid_liaison_jni_Liaison_testliaison
 JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_init_1engine
   (JNIEnv *, jclass);
 
+/*
+ * Class:     com_chessoid_liaison_jni_Liaison
+ * Method:    show_board
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_chessoid_liaison_jni_Liaison_show_1board
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_chessoid_liaison_jni_Liaison
+ * Method:    board_as_string
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_board_1as_1string
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     com_chessoid_liaison_jni_Liaison
+ * Method:    validate_move
+ * Signature: (Ljava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_validate_1move
+  (JNIEnv *, jclass, jstring);
+
 #ifdef __cplusplus
 }
 #endif
