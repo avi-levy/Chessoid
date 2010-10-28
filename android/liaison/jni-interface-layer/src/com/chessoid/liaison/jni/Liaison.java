@@ -17,6 +17,10 @@ public class Liaison {
 	
 	public static native boolean init_engine();
 	
+	public static native void show_board();
 	
+	public static native String board_as_string();
+	
+	public static native boolean validate_move(String sanMove);
 	
 }
