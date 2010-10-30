@@ -31,22 +31,31 @@ JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_init_1engine
 JNIEXPORT void JNICALL Java_com_chessoid_liaison_jni_Liaison_show_1board
   (JNIEnv *env, jclass thisClass)
 {
-	printf("Liaison: printing board as string...");
+	printf("Liaison: printing board as string...\n");
 	ShowBoard();
 }
 
 JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_board_1as_1string
   (JNIEnv *env, jclass thisClass)
 {
-	printf("Liaison: getting board as string...");
+	printf("Liaison: getting board as string...\n");
 	return NULL;
 }
 
+/**
+ * don't pass in any non-ascii compatible strings
+ */
 JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_validate_1move
   (JNIEnv *env, jclass thisClass, jstring sanMove)
 {
-	printf("Liaison: validating move: %s", &sanMove);	// XXX how to do this?
+	const jbyte *str;
+	str = (*env)->GetStringUTFChars(env, sanMove, NULL);
+	if (str == NULL)
+	{
+		return NULL;	/* OutOfMemoryError already thrown */
+	}
+	printf("Liaison: validating move: %s\n", str);
+	(*env)->ReleaseStringUTFChars(env, sanMove, str);
 	return true;
 }
-
 
