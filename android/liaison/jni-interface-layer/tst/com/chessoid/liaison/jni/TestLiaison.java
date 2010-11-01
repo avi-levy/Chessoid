@@ -35,8 +35,34 @@ public class TestLiaison extends TestCase {
 	
 	public void testValidateMove() { 
 		assertTrue("Engine init'n failed.", Liaison.init_engine());
-		boolean valid = Liaison.validate_move("a3");
-		System.out.println("Valid: " + valid);
-		assertTrue("Move expected to be valid, but wasn't", valid);		 
+		String move = "a3";
+		boolean valid = Liaison.validate_move(move);
+		assertTrue("Move (" + move + ")expected to be valid, but wasn't", valid);
+		move = "a7";
+		valid = Liaison.validate_move(move);
+		assertFalse("Move (" + move + ")expected to be invalid, but was valid", valid);
+		move = "a2";
+		valid = Liaison.validate_move(move);
+		assertFalse("Move (" + move + ")expected to be invalid, but was valid", valid);
+		move = "j10";
+		valid = Liaison.validate_move(move);
+		assertFalse("Move (" + move + ")expected to be invalid, but was valid", valid);
+		move = "z22";
+		valid = Liaison.validate_move(move);
+		assertFalse("Move (" + move + ")expected to be invalid, but was valid", valid);
+	}
+	
+	public void testInputCmd() {
+		assertTrue("Engine init'n failed.", Liaison.init_engine());
+		Liaison.input_cmd("help");	// TODO test return string from input_cmd() once implemented
+		Liaison.input_cmd("a3");
+	}
+	
+	public void testIterate() {
+		assertTrue("Engine init'n failed.", Liaison.init_engine());
+		Liaison.iterate();
+		assertTrue("Engine init'n failed.", Liaison.init_engine());
+		Liaison.input_cmd("a3");
+		Liaison.iterate();
 	}
 }
