@@ -845,19 +845,44 @@ void ShowHelp (const char * command)
  * ================================================================================
  */
 
+
+int DoMoveChessoid (char *sanMove)
+/*************************************************************************
+ *
+ * Execute the specified move.  Code taken from InputCmd() in cmd.c
+ *
+ * Returns true if move is successful,
+ * Returns false if move is not legal/not successful
+ *
+ **************************************************************************/
+{
+	 leaf *ptr;
+	 CLEAR (flags, THINK);
+	 memset(cmd,0,sizeof(cmd));
+	 if (NULL != sanMove)
+	     strncpy(cmd, sanMove, INPUT_SIZE-1);
+	 ptr = ValidateMove (cmd);
+	 if (ptr != NULL)
+	 {
+		 SANMove (ptr->move, 1);
+		 MakeMove (board.side, &ptr->move);
+		 strcpy (Game[GameCnt].SANmv, SANmv);
+		 SET (flags, THINK);
+		 return true;
+	 }
+	 return false;
+}
+
 void InputCmdChessoid (char *cmdinput)
 /*************************************************************************
  *
- *  Copied exactly from cmd.c InputCmd(), except it now takes input
- *	from the cmdinput parameter instead of reading from fgets()
+ *  This is the main user command interface driver (Chessoid version).
  *
- *	Currently has undefined behavior for complex commands (i.e. commands
- *	with sub-commands - not sure if all the modifications I made work and
- *	it hasn't been tested yet). This is really only intended to accept
- *	MOVEMENT commands in the SAN (Standard Algebraic Notation) format,
- *	e.g. "a3".
+ *  Copied/modified from InputCmd() in cmd.c , except it now takes input
+ *	from the cmdinput parameter instead of reading from fgets.
  *
- *	Troy Nichols Oct 31, 2010.
+ *	Does not support all the commands the regular InputCmd() function
+ *	does, so be careful.
  *
  *************************************************************************/
 {
@@ -865,38 +890,40 @@ void InputCmdChessoid (char *cmdinput)
    int suffix;
    int i;
    leaf *ptr;
-   int ncmds;
+//   int ncmds;		//unused now
    char *x,*trim;
 
    CLEAR (flags, THINK);
    memset(userinput,0,sizeof(userinput));
    memset(cmd,0,sizeof(cmd));
 #ifndef HAVE_LIBREADLINE /* Why is this necessary anyway? */
-//   memset(cmdinput,0,sizeof(cmdinput));	// XXX for chessoid, did find/replace, so don't try to memset the cmdinput param
-   	   	   // XXX is this a potential memory leak?
+   memset(inputstr,0,sizeof(inputstr));
 #endif
 
 #ifdef HAVE_LIBREADLINE
 	 if (isatty(STDIN_FILENO)) {
 	    sprintf(s,"%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
-	    *cmdinput = readline(s);
-	    if (*cmdinput == NULL) return;
-	    if (**cmdinput) {
-	       add_history(*cmdinput);
+	    inputstr = readline(s);
+	    if (inputstr == NULL) return;
+	    if (*inputstr) {
+	       add_history(inputstr);
 	    }
-	    if (strlen(*cmdinput) > INPUT_SIZE-1) {
+	    if (strlen(inputstr) > INPUT_SIZE-1) {
 	       printf("Warning: Input line truncated to %d characters.\n", INPUT_SIZE -1 );
-	       *cmdinput[INPUT_SIZE-1] = '\000';
+	       inputstr[INPUT_SIZE-1] = '\000';
 	    }
 	 } else {
-	    *cmdinput = malloc(INPUT_SIZE);
-	    if (*cmdinput == NULL) {
+	    inputstr = malloc(INPUT_SIZE);
+	    if (inputstr == NULL) {
 	       perror("InputCmd");
 	       exit(EXIT_FAILURE);
 	    }
-	    //fgets(inputstr, INPUT_SIZE, stdin);	// <-- OLD (GNU Chess)
-	    if (*cmdinput[0]) {
-	       *cmdinput[strlen(*cmdinput)-1] = 0;
+	    //	fgets(inputstr, INPUT_SIZE, stdin);	// <-- OLD CODE (GNU Chess)
+	    if (NULL != cmdinput) {
+	    	strncpy(inputstr, cmdinput, INPUT_SIZE-1);	// <-- NEW CODE (Chessoid)
+	    }
+	    if (inputstr[0]) {
+	       inputstr[strlen(inputstr)-1] = 0;
 	    }
 	 }
 #else /* !HAVE_LIBREADLINE */
@@ -904,80 +931,90 @@ void InputCmdChessoid (char *cmdinput)
 	  printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
 	  fflush(stdout);
         }
-	//fgets (inputstr, INPUT_SIZE, stdin) ;	// <-- OLD (GNU Chess)
+	//fgets (inputstr, INPUT_SIZE, stdin) ;	/ <-- OLD CODE (GNU Chess)
+    if (NULL != cmdinput) {
+    	strncpy(inputstr, cmdinput, INPUT_SIZE-1);	// <-- NEW CODE (Chessoid)
+    }
+
 #endif /* HAVE_LIBREADLINE */
 
 	cmd[0] = '\n';
-	strcpy(userinput,cmdinput);
-	sscanf (cmdinput, "%s %[^\n]", cmd, cmdinput);	//XXX take this out?
-	if (cmd[0] == '\n')
-	  goto done;
-	cmd[0] = subcmd[0] = setting[0] = subsetting[0] = '\0';
-        ncmds = sscanf (userinput,"%s %s %s %[^\n]",
-			cmd,subcmd,setting,subsetting);
+	strcpy(userinput,inputstr);
 
-   /* Put options after command back in *cmdinput - messy */
-   //sprintf(cmdinput,"%s %s %s",subcmd,setting,subsetting);
-        //XXX don't try this, does removing it break anything?
+//	Don't do this for Chessoid, we just won't accept sub-commands
+//	sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
+//	if (cmd[0] == '\n')
+//	  goto done;
+//	cmd[0] = subcmd[0] = setting[0] = subsetting[0] = '\0';
+//        ncmds = sscanf (userinput,"%s %s %s %[^\n]",
+//			cmd,subcmd,setting,subsetting);
+//
+//   /* Put options after command back in inputstr - messy */
+//   sprintf(inputstr,"%s %s %s",subcmd,setting,subsetting);
 
-   trim = cmdinput + strlen(cmdinput) - 1;
-   while ( trim>=cmdinput && *trim==' ')
+   trim = inputstr + strlen(inputstr) - 1;
+   while ( trim>=inputstr && *trim==' ')
                 *trim--='\0';
 
    if (strcmp (cmd, "quit") == 0 || strcmp (cmd, "exit") == 0)
       SET (flags, QUIT);
    else if (strcmp (cmd, "help") == 0)
-      ShowHelp (cmdinput);
+      ShowHelp (inputstr);
    else if (strcmp (cmd, "show") == 0)
-      ShowCmd (cmdinput);
-   else if (strncmp (cmd, "book", 4) == 0) {
-      if (strncmp(cmdinput, "add",3) == 0) {
-        sscanf (cmdinput, "add %s", file);
-        if (access(file,F_OK) < 0) {
-	  printf("The syntax to add a new book is:\n\n\tbook add file.pgn\n");
-        } else {
-          BookPGNReadFromFile (file);
-	}
-      } else if (strncmp (cmdinput, "on", 2) == 0 || strncmp (*cmdinput, "prefer", 6) == 0) {
-	bookmode = BOOKPREFER;
-	printf("book now on.\n");
-      } else if (strncmp (cmdinput, "off", 3) == 0) {
-	bookmode = BOOKOFF;
-	printf("book now off.\n");
-      } else if (strncmp (cmdinput, "best", 4) == 0) {
-	bookmode = BOOKBEST;
-	printf("book now best.\n");
-      } else if (strncmp (cmdinput, "worst", 5) == 0) {
-	bookmode = BOOKWORST;
-	printf("book now worst.\n");
-      } else if (strncmp (cmdinput, "random", 6) == 0) {
-	bookmode = BOOKRAND;
-	printf("book now random.\n");
-      }
-   } else if (strcmp (cmd, "test") == 0)
-      TestCmd (cmdinput);
+      ShowCmd (inputstr);
+
+//	Don't do 'book' commands for Chessoid
+//   else if (strncmp (cmd, "book", 4) == 0) {
+//      if (strncmp(inputstr, "add",3) == 0) {
+//        sscanf (inputstr, "add %s", file);
+//        if (access(file,F_OK) < 0) {
+//	  printf("The syntax to add a new book is:\n\n\tbook add file.pgn\n");
+//        } else {
+//          BookPGNReadFromFile (file);
+//        }
+//      }
+//      else if (strncmp (inputstr, "on", 2) == 0 || strncmp (inputstr, "prefer", 6) == 0) {
+//	bookmode = BOOKPREFER;
+//	printf("book now on.\n");
+//      } else if (strncmp (inputstr, "off", 3) == 0) {
+//	bookmode = BOOKOFF;
+//	printf("book now off.\n");
+//      } else if (strncmp (inputstr, "best", 4) == 0) {
+//	bookmode = BOOKBEST;
+//	printf("book now best.\n");
+//      } else if (strncmp (inputstr, "worst", 5) == 0) {
+//	bookmode = BOOKWORST;
+//	printf("book now worst.\n");
+//      } else if (strncmp (inputstr, "random", 6) == 0) {
+//	bookmode = BOOKRAND;
+//	printf("book now random.\n");
+//      }
+//   }
+
+   else if (strcmp (cmd, "test") == 0)
+      TestCmd (inputstr);
    else if (strcmp (cmd, "version") == 0)
       ShowVersion ();
    else if (strcmp (cmd, "pgnsave") == 0)
            {
-		if ( strlen(cmdinput) > 0 && strlen(cmdinput) < INPUT_SIZE )
-      		  PGNSaveToFile (cmdinput,"");
+		if ( strlen(inputstr) > 0 && strlen(inputstr) < INPUT_SIZE )
+      		  PGNSaveToFile (inputstr,"");
 		else
 		  printf("Invalid filename.\n");
 	   }
    else if (strcmp (cmd, "pgnload") == 0)
-      PGNReadFromFile (cmdinput);
+      PGNReadFromFile (inputstr);
    else if (strcmp (cmd, "manual") == 0)
       SET (flags, MANUAL);
    else if (strcmp (cmd, "debug") == 0)
    {
       SET (flags, DEBUGG);
       Debugmvl = 0;
-      if (strcmp (cmdinput, "debug") == 0)
+      if (strcmp (inputstr, "debug") == 0)
       {
-         while (strcmp (cmdinput, s))
+         while (strcmp (inputstr, s))
          {
-            sscanf (cmdinput, "%s %[^\n]", s, cmdinput);
+            sscanf (inputstr, "%s %[^\n]", s, inputstr);
             ptr = ValidateMove (s);
             Debugmv[Debugmvl++] = ptr->move;
             MakeMove (board.side, &ptr->move);
@@ -999,24 +1036,25 @@ void InputCmdChessoid (char *cmdinput)
 	;
    else if (strcmp (cmd, "easy") == 0)
 	;
-//   else if (strcmp (cmd, "list") == 0) {
-//	if (*cmdinput == '?')	// XXX test this
-//	{
-//	  printf("name    - list known players alphabetically\n");
-//	  printf("score   - list by GNU best result first \n");
-//	  printf("reverse - list by GNU worst result first\n");
-//	} else {
-//          sscanf (*cmdinput, "%s %[^\n]", cmd, *cmdinput);
-//          if (*cmdinput == '\000') DBListPlayer("rscore");
-//	  else DBListPlayer(*cmdinput);
-//	}
-//   }
+   else if (strcmp (cmd, "list") == 0) {
+	if (inputstr[0] == '?')
+	{
+	  printf("name    - list known players alphabetically\n");
+	  printf("score   - list by GNU best result first \n");
+	  printf("reverse - list by GNU worst result first\n");
+	} else {
+          // sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
+          //if (inputstr == '\000') DBListPlayer("rscore");
+	  //else DBListPlayer(inputstr);
+		DBListPlayer(inputstr);	// no scanf allowed in Chessoid, just fall thru to this.
+	}
+   }
    else if (strcmp (cmd, "post") == 0)
 	SET (flags, POST);
    else if (strcmp (cmd, "nopost") == 0)
 	CLEAR (flags, POST);
    else if (strcmp (cmd, "name") == 0) {
-      strcpy(name, cmdinput);
+      strcpy(name, inputstr);
       x = name;
       while (*x != '\000') {
         if (*x == ' ') {
@@ -1038,16 +1076,16 @@ void InputCmdChessoid (char *cmdinput)
    }
    else if (strcmp (cmd, "result") == 0) {
      if (ofp != stdout) {
-	fprintf(ofp, "result: %s\n",cmdinput);
+	fprintf(ofp, "result: %s\n",inputstr);
 	fclose(ofp);
 	ofp = stdout;
         printf("Save to %s\n",gamefile);
-        PGNSaveToFile (gamefile, cmdinput);
-	DBUpdatePlayer (name, cmdinput);
+        PGNSaveToFile (gamefile, inputstr);
+	DBUpdatePlayer (name, inputstr);
      }
    }
    else if (strcmp (cmd, "rating") == 0) {
-      sscanf(cmdinput,"%d %d",&myrating,&opprating);
+      sscanf(inputstr,"%d %d",&myrating,&opprating);
       fprintf(ofp,"my rating = %d, opponent rating = %d\n",myrating,opprating);
       /* Change randomness of book based on opponent rating. */
       /* Basically we play narrower book the higher the opponent */
@@ -1067,7 +1105,7 @@ void InputCmdChessoid (char *cmdinput)
      myrating = opprating = 0;
    }
    else if (strcmp (cmd, "time") == 0) {
-     sscanf (cmdinput, "%s %[^\n]", s, cmdinput);
+     sscanf (inputstr, "%s %[^\n]", s, inputstr);
      TimeLimit[1^board.side] = atoi(s) / 100.0f ;
    }
    else if (strcmp (cmd, "otim") == 0)
@@ -1076,19 +1114,29 @@ void InputCmdChessoid (char *cmdinput)
 	;
 //   else if (strcmp (cmd, "hash") == 0)
 //   {
-//      sscanf (cmdinput, "%s %[^\n]", cmd, *cmdinput);
+//      sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
 //      if (strcmp (cmd, "off") == 0)
 //         CLEAR (flags, USEHASH);
 //      else if (strcmp (cmd, "on") == 0)
 //         SET (flags, USEHASH);
 //      printf ("Hashing %s\n", flags & USEHASH ? "on" : "off");
 //   }
+   // do the following instead (avoid scanf())
+   else if (strcmp (cmd, "hash-off") == 0)
+   {
+      CLEAR (flags, USEHASH);
+      printf ("Hashing off\n");
+   }
+   else if (strcmp (cmd, "hash-on") == 0) {
+	   SET (flags, USEHASH);
+	   printf ("Hashing on\n");
+   }
    else if (strcmp (cmd, "hashsize") == 0)
    {
-      if (cmdinput == 0) {
+      if (inputstr[0] == 0) {
 	 printf("Current HashSize is %u slots\n", HashSize);
       } else {
-	 i = atoi (cmdinput);
+	 i = atoi (inputstr);
 	 TTHashMask = 0;
 	 while ((i >>= 1) > 0)
 	 {
@@ -1100,18 +1148,22 @@ void InputCmdChessoid (char *cmdinput)
 	 InitHashTable ();
       }
    }
+
+//	Don't support this option from Chessoid
 //   else if (strcmp (cmd, "null") == 0)
 //   {
-//      sscanf (*cmdinput, "%s %[^\n]", cmd, *cmdinput);
+//      sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
 //      if (strcmp (cmd, "off") == 0)
 //         CLEAR (flags, USENULL);
 //      else if (strcmp (cmd, "on") == 0)
 //         SET (flags, USENULL);
 //      printf ("Null moves %s\n", flags & USENULL ? "on" : "off");
 //   }
+
+//	Don't support xboard option from Chessoid
 //   else if (strcmp (cmd, "xboard") == 0)
 //   {
-//      sscanf (*cmdinput, "%s %[^\n]", cmd, *cmdinput);
+//      sscanf (inputstr, "%s %[^\n]", cmd, inputstr);
 //      if (strcmp (cmd, "off") == 0)
 //         CLEAR (flags, XBOARD);
 //      else if (strcmp (cmd, "on") == 0)
@@ -1131,13 +1183,13 @@ void InputCmdChessoid (char *cmdinput)
       }
    }
    else if (strcmp (cmd, "depth") == 0 || strcmp (cmd, "sd") == 0) {
-      SearchDepth = atoi (cmdinput);
+      SearchDepth = atoi (inputstr);
       printf("Search to a depth of %d\n",SearchDepth);
    }
    else if (strcmp (cmd, "level") == 0)
    {
       SearchDepth = 0;
-      sscanf (cmdinput, "%d %f %d", &TCMove, &TCTime, &TCinc);
+      sscanf (inputstr, "%d %f %d", &TCMove, &TCTime, &TCinc);
       if (TCMove == 0) {
 	TCMove =  35 /* MIN((5*(GameCnt+1)/2)+1,60) */;
 	printf("TCMove = %d\n",TCMove);
@@ -1163,7 +1215,7 @@ void InputCmdChessoid (char *cmdinput)
    }
    else if (strcmp (cmd, "load") == 0 || strcmp (cmd, "epdload") == 0)
    {
-      LoadEPD (cmdinput);
+      LoadEPD (inputstr);
       if (!ValidateBoard())
       {
 	 SET (flags, ENDED);
@@ -1172,14 +1224,14 @@ void InputCmdChessoid (char *cmdinput)
    }
    else if (strcmp (cmd, "save") == 0 || strcmp (cmd, "epdsave") == 0)
 	{
-	   if ( strlen(cmdinput) > 0 )
-             SaveEPD (cmdinput);
+	   if ( strlen(inputstr) > 0 )
+             SaveEPD (inputstr);
 	   else
 	     printf("Invalid filename.\n");
 	}
    else if (strcmp (cmd, "epd") == 0)
    {
-      ParseEPD (cmdinput);
+      ParseEPD (inputstr);
       NewPosition();
       ShowBoard();
       printf ("\n%s : Best move = %s\n", id, solution);
@@ -1187,7 +1239,7 @@ void InputCmdChessoid (char *cmdinput)
    else if (strcmp (cmd, "setboard") == 0)
    {
       /* setboard uses FEN, not EPD, but ParseEPD will accept FEN too */
-      ParseEPD (cmdinput);
+      ParseEPD (inputstr);
       NewPosition();
    }
    else if (strcmp (cmd, "ping") == 0)
@@ -1196,7 +1248,7 @@ void InputCmdChessoid (char *cmdinput)
 	 reply only after moving.  In this version of GNU Chess, we
 	 never read commands while we are on move, so we don't have to
 	 worry about that here. */
-      printf("pong %s\n", cmdinput);
+      printf("pong %s\n", inputstr);
       fflush(stdout);
    }
    else if (strcmp (cmd, "switch") == 0)
@@ -1213,7 +1265,7 @@ void InputCmdChessoid (char *cmdinput)
       computer = board.side;
    }
    else if (strcmp (cmd, "solve") == 0 || strcmp (cmd, "solveepd") == 0)
-      Solve (cmdinput);
+      Solve (inputstr);
    else if (strcmp (cmd,"remove") == 0) {
     if (GameCnt >= 0) {
        CLEAR (flags, ENDED);
@@ -1257,15 +1309,18 @@ void InputCmdChessoid (char *cmdinput)
    else if (strcmp (cmd, "rejected") == 0)
 	;
    /* Set total time for move to be N seconds is "st N" */
-   else if (strcmp (cmd, "st") == 0)
-   {
-	/* Approximately level 1 0 N */
-	sscanf(cmdinput,"%d",&TCinc);
-	suddendeath = 0 ;
-	/* Allow a little fussiness for failing low etc */
-	SearchTime = TCinc * 0.90f ;
-        CLEAR (flags, TIMECTL);
-   }
+
+//	Avoid scanf() in chessoid, so don't support this command for now
+//   else if (strcmp (cmd, "st") == 0)
+//   {
+//	/* Approximately level 1 0 N */
+//	sscanf(inputstr,"%d",&TCinc);
+//	suddendeath = 0 ;
+//	/* Allow a little fussiness for failing low etc */
+//	SearchTime = TCinc * 0.90f ;
+//        CLEAR (flags, TIMECTL);
+//   }
+
    /* Ignore draw offers */
    else if (strcmp (cmd, "draw") == 0)
 	;
@@ -1347,18 +1402,24 @@ void InputCmdChessoid (char *cmdinput)
    }
   done:
 #ifdef HAVE_LIBREADLINE
-   free(*cmdinput);
+   free(inputstr);
 #endif
    return;
 }
-
 
 //void InputCmdChessoid (char *cmdinput)
 ///*************************************************************************
 // *
 // *  Copied exactly from cmd.c InputCmd(), except it now takes input
-// *	from the cmdinput parameter instead of reading from fgets().
-// *	Note that all occurrences of ipnutstr were replaced with cmdinput.
+// *	from the cmdinput parameter instead of reading from fgets()
+// *
+// *	Currently has undefined behavior for complex commands (i.e. commands
+// *	with sub-commands - not sure if all the modifications I made work and
+// *	it hasn't been tested yet). This is really only intended to accept
+// *	MOVEMENT commands in the SAN (Standard Algebraic Notation) format,
+// *	e.g. "a3".
+// *
+// *	Troy Nichols Oct 31, 2010.
 // *
 // *************************************************************************/
 //{
@@ -1370,34 +1431,34 @@ void InputCmdChessoid (char *cmdinput)
 //   char *x,*trim;
 //
 //   CLEAR (flags, THINK);
-////   memset(userinput,0,sizeof(userinput));
-////   memset(cmd,0,sizeof(cmd));
+//   memset(userinput,0,sizeof(userinput));
+//   memset(cmd,0,sizeof(cmd));
 //#ifndef HAVE_LIBREADLINE /* Why is this necessary anyway? */
-////   memset(cmdinput,0,sizeof(cmdinput));
+////   memset(cmdinput,0,sizeof(cmdinput));	// XXX for chessoid, did find/replace, so don't try to memset the cmdinput param
+//   	   	   // XXX is this a potential memory leak?
 //#endif
 //
 //#ifdef HAVE_LIBREADLINE
 //	 if (isatty(STDIN_FILENO)) {
 //	    sprintf(s,"%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
-//	    cmdinput = readline(s);
-//	    if (cmdinput == NULL) return;
-//	    if (*cmdinput) {
-//	       add_history(cmdinput);
+//	    *cmdinput = readline(s);
+//	    if (*cmdinput == NULL) return;
+//	    if (**cmdinput) {
+//	       add_history(*cmdinput);
 //	    }
-//	    if (strlen(cmdinput) > INPUT_SIZE-1) {
+//	    if (strlen(*cmdinput) > INPUT_SIZE-1) {
 //	       printf("Warning: Input line truncated to %d characters.\n", INPUT_SIZE -1 );
-//	       cmdinput[INPUT_SIZE-1] = '\000';
+//	       *cmdinput[INPUT_SIZE-1] = '\000';
 //	    }
 //	 } else {
-//	    cmdinput = malloc(INPUT_SIZE);
-//	    if (cmdinput == NULL) {
+//	    *cmdinput = malloc(INPUT_SIZE);
+//	    if (*cmdinput == NULL) {
 //	       perror("InputCmd");
 //	       exit(EXIT_FAILURE);
 //	    }
-//	    //fgets(cmdinput, INPUT_SIZE, stdin);	// <-- OLD (GNU Chess)
-//	    cmdinput = cmdinput;	// <-- NEW (Chessoid)
-//	    if (cmdinput[0]) {
-//	       cmdinput[strlen(cmdinput)-1] = 0;
+//	    //fgets(inputstr, INPUT_SIZE, stdin);	// <-- OLD (GNU Chess)
+//	    if (*cmdinput[0]) {
+//	       *cmdinput[strlen(*cmdinput)-1] = 0;
 //	    }
 //	 }
 //#else /* !HAVE_LIBREADLINE */
@@ -1405,21 +1466,21 @@ void InputCmdChessoid (char *cmdinput)
 //	  printf ("%s (%d) %c ", color[board.side], (GameCnt+1)/2 + 1, prompt);
 //	  fflush(stdout);
 //        }
-//	//fgets (cmdinput, INPUT_SIZE, stdin) ;	// <-- OLD (GNU Chess)
-//	cmdinput = cmdinput;	// <-- NEW (GNU Chess)
+//	//fgets (inputstr, INPUT_SIZE, stdin) ;	// <-- OLD (GNU Chess)
 //#endif /* HAVE_LIBREADLINE */
 //
 //	cmd[0] = '\n';
 //	strcpy(userinput,cmdinput);
-//	sscanf (cmdinput, "%s %[^\n]", cmd, cmdinput);
+//	sscanf (cmdinput, "%s %[^\n]", cmd, cmdinput);	//XXX take this out?
 //	if (cmd[0] == '\n')
 //	  goto done;
 //	cmd[0] = subcmd[0] = setting[0] = subsetting[0] = '\0';
 //        ncmds = sscanf (userinput,"%s %s %s %[^\n]",
 //			cmd,subcmd,setting,subsetting);
 //
-//   /* Put options after command back in cmdinput - messy */
-//   sprintf(cmdinput,"%s %s %s",subcmd,setting,subsetting);
+//   /* Put options after command back in *cmdinput - messy */
+//   //sprintf(cmdinput,"%s %s %s",subcmd,setting,subsetting);
+//        //XXX don't try this, does removing it break anything?
 //
 //   trim = cmdinput + strlen(cmdinput) - 1;
 //   while ( trim>=cmdinput && *trim==' ')
@@ -1439,7 +1500,7 @@ void InputCmdChessoid (char *cmdinput)
 //        } else {
 //          BookPGNReadFromFile (file);
 //	}
-//      } else if (strncmp (cmdinput, "on", 2) == 0 || strncmp (cmdinput, "prefer", 6) == 0) {
+//      } else if (strncmp (cmdinput, "on", 2) == 0 || strncmp (*cmdinput, "prefer", 6) == 0) {
 //	bookmode = BOOKPREFER;
 //	printf("book now on.\n");
 //      } else if (strncmp (cmdinput, "off", 3) == 0) {
@@ -1500,18 +1561,18 @@ void InputCmdChessoid (char *cmdinput)
 //	;
 //   else if (strcmp (cmd, "easy") == 0)
 //	;
-//   else if (strcmp (cmd, "list") == 0) {
-//	if (cmdinput[0] == '?')
-//	{
-//	  printf("name    - list known players alphabetically\n");
-//	  printf("score   - list by GNU best result first \n");
-//	  printf("reverse - list by GNU worst result first\n");
-//	} else {
-//          sscanf (cmdinput, "%s %[^\n]", cmd, cmdinput);
-//          if (cmdinput == '\000') DBListPlayer("rscore");
-//	  else DBListPlayer(cmdinput);
-//	}
-//   }
+////   else if (strcmp (cmd, "list") == 0) {
+////	if (*cmdinput == '?')	// XXX test this
+////	{
+////	  printf("name    - list known players alphabetically\n");
+////	  printf("score   - list by GNU best result first \n");
+////	  printf("reverse - list by GNU worst result first\n");
+////	} else {
+////          sscanf (*cmdinput, "%s %[^\n]", cmd, *cmdinput);
+////          if (*cmdinput == '\000') DBListPlayer("rscore");
+////	  else DBListPlayer(*cmdinput);
+////	}
+////   }
 //   else if (strcmp (cmd, "post") == 0)
 //	SET (flags, POST);
 //   else if (strcmp (cmd, "nopost") == 0)
@@ -1575,18 +1636,18 @@ void InputCmdChessoid (char *cmdinput)
 //	;
 //   else if (strcmp (cmd, "random") == 0)
 //	;
-//   else if (strcmp (cmd, "hash") == 0)
-//   {
-//      sscanf (cmdinput, "%s %[^\n]", cmd, cmdinput);
-//      if (strcmp (cmd, "off") == 0)
-//         CLEAR (flags, USEHASH);
-//      else if (strcmp (cmd, "on") == 0)
-//         SET (flags, USEHASH);
-//      printf ("Hashing %s\n", flags & USEHASH ? "on" : "off");
-//   }
+////   else if (strcmp (cmd, "hash") == 0)
+////   {
+////      sscanf (cmdinput, "%s %[^\n]", cmd, *cmdinput);
+////      if (strcmp (cmd, "off") == 0)
+////         CLEAR (flags, USEHASH);
+////      else if (strcmp (cmd, "on") == 0)
+////         SET (flags, USEHASH);
+////      printf ("Hashing %s\n", flags & USEHASH ? "on" : "off");
+////   }
 //   else if (strcmp (cmd, "hashsize") == 0)
 //   {
-//      if (cmdinput[0] == 0) {
+//      if (cmdinput == 0) {
 //	 printf("Current HashSize is %u slots\n", HashSize);
 //      } else {
 //	 i = atoi (cmdinput);
@@ -1601,26 +1662,26 @@ void InputCmdChessoid (char *cmdinput)
 //	 InitHashTable ();
 //      }
 //   }
-//   else if (strcmp (cmd, "null") == 0)
-//   {
-//      sscanf (cmdinput, "%s %[^\n]", cmd, cmdinput);
-//      if (strcmp (cmd, "off") == 0)
-//         CLEAR (flags, USENULL);
-//      else if (strcmp (cmd, "on") == 0)
-//         SET (flags, USENULL);
-//      printf ("Null moves %s\n", flags & USENULL ? "on" : "off");
-//   }
-//   else if (strcmp (cmd, "xboard") == 0)
-//   {
-//      sscanf (cmdinput, "%s %[^\n]", cmd, cmdinput);
-//      if (strcmp (cmd, "off") == 0)
-//         CLEAR (flags, XBOARD);
-//      else if (strcmp (cmd, "on") == 0)
-//         SET (flags, XBOARD);
-//      else if (!(flags & XBOARD)) { /* set if unset and only xboard called */
-//	 SET (flags, XBOARD);	    /* like in xboard/winboard usage */
-//      }
-//   }
+////   else if (strcmp (cmd, "null") == 0)
+////   {
+////      sscanf (*cmdinput, "%s %[^\n]", cmd, *cmdinput);
+////      if (strcmp (cmd, "off") == 0)
+////         CLEAR (flags, USENULL);
+////      else if (strcmp (cmd, "on") == 0)
+////         SET (flags, USENULL);
+////      printf ("Null moves %s\n", flags & USENULL ? "on" : "off");
+////   }
+////   else if (strcmp (cmd, "xboard") == 0)
+////   {
+////      sscanf (*cmdinput, "%s %[^\n]", cmd, *cmdinput);
+////      if (strcmp (cmd, "off") == 0)
+////         CLEAR (flags, XBOARD);
+////      else if (strcmp (cmd, "on") == 0)
+////         SET (flags, XBOARD);
+////      else if (!(flags & XBOARD)) { /* set if unset and only xboard called */
+////	 SET (flags, XBOARD);	    /* like in xboard/winboard usage */
+////      }
+////   }
 //   else if (strcmp (cmd, "protover") == 0)
 //   {
 //      if (flags & XBOARD) {
@@ -1848,7 +1909,10 @@ void InputCmdChessoid (char *cmdinput)
 //   }
 //  done:
 //#ifdef HAVE_LIBREADLINE
-//   free(cmdinput);
+//   free(*cmdinput);
 //#endif
 //   return;
 //}
+
+
+

@@ -57,6 +57,14 @@ JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_input_1cmd
 
 /*
  * Class:     com_chessoid_liaison_jni_Liaison
+ * Method:    doMove
+ * Signature: (Ljava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_doMove
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     com_chessoid_liaison_jni_Liaison
  * Method:    iterate
  * Signature: ()V
  */

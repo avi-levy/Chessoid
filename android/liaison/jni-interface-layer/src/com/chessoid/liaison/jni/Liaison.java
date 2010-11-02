@@ -49,7 +49,8 @@ public class Liaison {
 	public static native boolean validate_move(String sanMove);
 	
 	/**
-	 * Ask the engine to run the specified command string.
+	 * Ask the engine to run the specified command string.  This isn't
+	 * very well-tested.
 	 * @param engineCommand String representing an engine command, e.g 
 	 * a SAN (Standard Algebraic Notation) move.
 	 * @return response from the engine as a String
@@ -57,6 +58,13 @@ public class Liaison {
 	 * only prints to stdout 
 	 */
 	public static native String input_cmd(String engineCommand);
+	
+	/**
+	 * Ask the engine to make the specified move.
+	 * @param sanMove String of the move to test, in SAN (Standard
+	 * Algebraic Notation) format.
+	 */
+	public static native boolean doMove(String sanMove);
 	
 	/**
 	 * Allow the computer to make a move.

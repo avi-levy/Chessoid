@@ -29,8 +29,13 @@ public class TestLiaison extends TestCase {
 	
 	public void testBoardAsString() {
 		assertTrue("Engine init'n failed.", Liaison.init_engine());
-		String board = Liaison.board_as_string();
-		assertNull(board);	//for now returns null, not implemented yet... TODO: implement board_as_string in the C code
+		String 
+		board = Liaison.board_as_string();
+		board = Liaison.board_as_string();
+		board = Liaison.board_as_string();
+		board = Liaison.board_as_string();
+		System.out.println("BOARD:\n" + board);
+		//assertNull(board);	//for now returns null, not implemented yet... TODO: implement board_as_string in the C code
 	}
 	
 	public void testValidateMove() { 
@@ -56,6 +61,12 @@ public class TestLiaison extends TestCase {
 		assertTrue("Engine init'n failed.", Liaison.init_engine());
 		Liaison.input_cmd("help");	// TODO test return string from input_cmd() once implemented
 		Liaison.input_cmd("a3");
+	}
+	
+	public void testDoMove() {
+		assertTrue("Engine init'n failed.", Liaison.init_engine());
+		System.out.println(Liaison.doMove("a3"));
+		Liaison.show_board();
 	}
 	
 	public void testIterate() {
