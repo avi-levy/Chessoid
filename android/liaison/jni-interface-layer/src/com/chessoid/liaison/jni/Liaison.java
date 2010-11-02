@@ -1,5 +1,7 @@
 package com.chessoid.liaison.jni;
 
+import com.chessoid.model.Board;
+
 /**
  * The JNI interface layer between the GNU chess engine (in C)
  * and the Java application.
@@ -38,6 +40,18 @@ public class Liaison {
 	 * and all the pieces
 	 */
 	public static native String board_as_string();
+	
+	/**
+	 * Query the engine and build a model of the chess board and pieces
+	 * @param oldBoard if provided, updates an existing board instead
+	 * of creating a new one.  If oldBoard is null, will create
+	 * a new board.  TODO: need to implement 
+	 * , <b>null board currently returns null</b>
+	 * @return a Board object which matches the state of the engine's
+	 * chess board.  
+	 */
+	public static native Board board(Board oldBoard);
+	
 	
 	/**
 	 * Ask the engine to test if a specified move is valid on the current

@@ -2,6 +2,8 @@ package com.chessoid.liaison.jni;
 
 import junit.framework.TestCase;
 
+import com.chessoid.model.Board;
+
 public class TestLiaison extends TestCase {
 
 	@Override public void setUp() {
@@ -36,6 +38,13 @@ public class TestLiaison extends TestCase {
 		board = Liaison.board_as_string();
 		System.out.println("BOARD:\n" + board);
 		//assertNull(board);	//for now returns null, not implemented yet... TODO: implement board_as_string in the C code
+	}
+	
+	public void testBoard() {
+		assertTrue("Engine init'n failed.", Liaison.init_engine());
+		Board board = new Board();
+		board = Liaison.board(board);
+		System.out.println(board);
 	}
 	
 	public void testValidateMove() { 

@@ -41,6 +41,14 @@ JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_board_1as_1strin
 
 /*
  * Class:     com_chessoid_liaison_jni_Liaison
+ * Method:    board
+ * Signature: (Lcom/chessoid/model/Board;)Lcom/chessoid/model/Board;
+ */
+JNIEXPORT jobject JNICALL Java_com_chessoid_liaison_jni_Liaison_board
+  (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     com_chessoid_liaison_jni_Liaison
  * Method:    validate_move
  * Signature: (Ljava/lang/String;)Z
  */

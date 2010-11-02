@@ -3,6 +3,9 @@
  *
  *  Created on: Oct 19, 2010
  *      Author: troy
+ *
+ *      TODO functions in here might need more robust error handling
+ *      if something breaks in them, they are very likely to crash the VM.
  */
 
 #include <stdio.h>
@@ -91,6 +94,27 @@ JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_board_1as_1strin
 	fflush(stdout);
 
 	return (*env)->NewStringUTF(env, buffer);
+}
+
+JNIEXPORT jobject JNICALL Java_com_chessoid_liaison_jni_Liaison_board
+  (JNIEnv *env, jclass thisClass, jobject jBoard)
+{
+	// TODO check if jBoard is null, if so create a new one
+	// if jBoard is not null, just update it and send it back.
+
+	jmethodID mSetPiece = (*env)->GetMethodID(env, jBoard, "setPiece", "()V");
+
+
+	// XXX this doesn't work yet...
+	jchar piece = 'p';
+	jchar col = 'a';
+	jint row = 1;
+
+	jvalue jArgs[] = { 'p', 'a', 1 };
+
+
+	jBoard = (*env)->CallObjectMethod(env, jBoard, mSetPiece, jArgs);
+	return jBoard;
 }
 
 /**
