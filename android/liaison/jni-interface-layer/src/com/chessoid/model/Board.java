@@ -19,6 +19,10 @@ package com.chessoid.model;
  * R N B Q K B N R
  * </pre>
  * 
+ * Dots are used to represent empty spaces above, but
+ * really empty "squares" should be represented by
+ * the '\0' character.
+ * 
  * Note that lowercase are black and uppercase
  * are white.  This convention should be followed
  * when setting the locations of pieces.

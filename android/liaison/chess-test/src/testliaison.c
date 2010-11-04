@@ -24,6 +24,7 @@ void test_input_cmd_chessoid();
 int main()
 {
 	printf("chess-test: starting chess engine test...\n");
+	ShowBoard();
 	test_init_engine();
 	test_show_board();
 	test_board_as_string();

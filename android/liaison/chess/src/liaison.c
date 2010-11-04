@@ -14,43 +14,60 @@
 #include "common.h"
 
 static char buffer[128];
+int b_debug = 0;
+
+void debug(char *msg)
+{
+	if (b_debug) {
+		printf("LIASON: %s\n", msg);
+		fflush(stdout);
+	}
+}
 
 JNIEXPORT void JNICALL Java_com_chessoid_liaison_jni_Liaison_testliaison
   (JNIEnv *env, jobject jobj)
 {
-	printf("Hello from liaison.c!\n");
+	debug("Hello from liaison.c!  Chess engine version follows:");
 	ShowVersion();
 	fflush(stdout);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_init_1engine
-  (JNIEnv *env, jclass thisClass)
+JNIEXPORT void JNICALL Java_com_chessoid_liaison_jni_Liaison_debugMode
+  (JNIEnv *env, jobject liaisonObj, jboolean debugToggle)
 {
-	printf("Liaison: Initializing engine...\n");
-	fflush(stdout);
+	b_debug = debugToggle;
+	if (b_debug)
+		printf("LIASON: Liaison debugging enabled.\n");
+	else
+		debug("LIASON: debugging disabled.\n");
+}
+
+JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_init_1engine
+  (JNIEnv *env, jobject liaisonObj)
+{
+	debug("Initializing engine.");
 	flags = ULL(0);		/* <-- initialize control flags (taken from main()) */
 	ofp = stdout;		/* <-- output for thinking (taken from main()) */
 	Initialize();
-	printf("Liaison: Engine initialization complete.\n");
-	fflush(stdout);
+	debug("Engine initialization complete.");
 	return true;
 }
 
 JNIEXPORT void JNICALL Java_com_chessoid_liaison_jni_Liaison_show_1board
-  (JNIEnv *env, jclass thisClass)
+  (JNIEnv *env, jobject liaisonObj)
 {
-	printf("Liaison: printing board as string...\n");
+	debug("Printing board as string.");
 	ShowBoard();
 	fflush(stdout);
 }
 
 JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_board_1as_1string
-  (JNIEnv *env, jclass thisClass)
+  (JNIEnv *env, jobject liaisonObj)
 {
 	/*
 	 * This works in a similar way to ShowBoard() in output.c
 	 */
-	printf("Liaison: getting board as string\n");
+	debug("Getting board as string.");
 
 	buffer[0] = '\0';	// clear the buffer
 
@@ -89,31 +106,55 @@ JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_board_1as_1strin
 		}
 		strcat(buffer, "\n");
 	}
-	strcat(buffer, "\n");
-
-	fflush(stdout);
 
 	return (*env)->NewStringUTF(env, buffer);
 }
 
 JNIEXPORT jobject JNICALL Java_com_chessoid_liaison_jni_Liaison_board
-  (JNIEnv *env, jclass thisClass, jobject jBoard)
+  (JNIEnv *env, jobject liaisonObj, jobject jBoard)
 {
-	// TODO check if jBoard is null, if so create a new one
-	// if jBoard is not null, just update it and send it back.
+	/* if jBoard is not null, update it and send it back. */
+	if (NULL == jBoard)
+		return NULL;
+	jclass jBoardClass = (*env)->GetObjectClass(env, jBoard);
+	jmethodID mSetPiece = (*env)->GetMethodID(env, jBoardClass, "setPieceAt", "(CII)V");
+	if (NULL == mSetPiece)
+		return NULL;			/* method not found, exception thrown */
 
-	jmethodID mSetPiece = (*env)->GetMethodID(env, jBoard, "setPiece", "()V");
+	int r, c, sq;
+	for (r=56; r >=0; r-=8)
+	{
+		for (c=0; c < 8; c++){
+			sq = r + c;
+			if (board.b[white][pawn] & BitPosArray[sq])
+				(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'P', c+1, (r/8)+1);
+			else if (board.b[white][knight] & BitPosArray[sq])
+				(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'N', c+1, (r/8)+1);
+	        else if (board.b[white][bishop] & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'B', c+1, (r/8)+1);
+	        else if (board.b[white][rook]   & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'R', c+1, (r/8)+1);
+	        else if (board.b[white][queen]  & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'Q', c+1, (r/8)+1);
+	        else if (board.b[white][king]   & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'K', c+1, (r/8)+1);
+	        else if (board.b[black][pawn]   & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'p', c+1, (r/8)+1);
+	        else if (board.b[black][knight] & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'n', c+1, (r/8)+1);
+	        else if (board.b[black][bishop] & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'b', c+1, (r/8)+1);
+	        else if (board.b[black][rook]   & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'r', c+1, (r/8)+1);
+	        else if (board.b[black][queen]  & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'q', c+1, (r/8)+1);
+	        else if (board.b[black][king]   & BitPosArray[sq])
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'k', c+1, (r/8)+1);
+	        else
+	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, '\0', c+1, (r/8)+1);
+		}
+	}
 
-
-	// XXX this doesn't work yet...
-	jchar piece = 'p';
-	jchar col = 'a';
-	jint row = 1;
-
-	jvalue jArgs[] = { 'p', 'a', 1 };
-
-
-	jBoard = (*env)->CallObjectMethod(env, jBoard, mSetPiece, jArgs);
 	return jBoard;
 }
 
@@ -121,27 +162,32 @@ JNIEXPORT jobject JNICALL Java_com_chessoid_liaison_jni_Liaison_board
  * don't pass in any non-ascii compatible strings
  */
 JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_validate_1move
-  (JNIEnv *env, jclass thisClass, jstring sanMove)
+  (JNIEnv *env, jobject liaisonObj, jstring sanMove)
 {
 	int valid = true;
 	const jbyte *str;
 	str = (*env)->GetStringUTFChars(env, sanMove, NULL);
 	if (NULL == str)
 	{
-		return NULL;	/* OutOfMemoryError already thrown */
+		debug("Error converting Java string to C string");
+		return false;	/* OutOfMemoryError already thrown */
 	}
-	printf("Liaison: validating move: %s\n", str);
+	debug("Validating move:");
+	debug(str);
 	if (NULL == ValidateMove(str))
 	{
 		valid = false;
 	}
 	(*env)->ReleaseStringUTFChars(env, sanMove, str);
-	fflush(stdout);
+
+	if (valid) debug("Move is valid.");
+	else debug("Move is NOT valid.");
+
 	return valid;
 }
 
 JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_input_1cmd
-  (JNIEnv *env, jclass thisClass, jstring engCmd)
+  (JNIEnv *env, jobject liaisonObj, jstring engCmd)
 {
 	// XXX: how to get the response from the engine?
 	const jbyte *str;
@@ -150,16 +196,16 @@ JNIEXPORT jstring JNICALL Java_com_chessoid_liaison_jni_Liaison_input_1cmd
 	{
 		return NULL;	/* OutOfMemoryError already thrown */
 	}
-	printf("Liaison: input engine command: '%s'\n", str);
+	debug("Input engine command:");
+	debug(str);
 	InputCmdChessoid(str);
 	(*env)->ReleaseStringUTFChars(env, engCmd, str);
-	fflush(stdout);
 	return NULL;
 		// XXX: should we return an empty string here (how to do that?)?
 }
 
 JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_doMove
-  (JNIEnv *env, jclass thisClass, jstring sanMove)
+  (JNIEnv *env, jobject liaisonObj, jstring sanMove)
 {
 	const jbyte *str;
 	str = (*env)->GetStringUTFChars(env, sanMove, NULL);
@@ -167,17 +213,18 @@ JNIEXPORT jboolean JNICALL Java_com_chessoid_liaison_jni_Liaison_doMove
 	{
 		return NULL;	/* OutOfMemoryError already thrown */
 	}
-	printf("Liaison: asking engine to doMove() for: '%s'\n", str);
-	fflush(stdout);
-	return DoMoveChessoid(str);
+	debug("Asking engine to doMove():");
+	debug(str);
+	jboolean result = DoMoveChessoid(str);
+	(*env)->ReleaseStringUTFChars(env, sanMove, str);
+	return result;
 }
 
 JNIEXPORT void JNICALL Java_com_chessoid_liaison_jni_Liaison_iterate
-  (JNIEnv *env, jclass thisClass)
+  (JNIEnv *env, jobject liaisonObj)
 {
-	printf("Liaison: Allowing engine to iterate (let the computer move)...\n");
+	debug("Allowing engine to iterate (let the computer move).");
 	Iterate();
-	printf("Liaison: Engine iteration complete.\n");
-	fflush(stdout);
+	debug("Engine iteration complete.");
 }
 

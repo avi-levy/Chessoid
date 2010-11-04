@@ -19,38 +19,50 @@ public class Liaison {
 	 * Method to test that we can connect to the engine.  Asks the engine
 	 * to print its version number to stdout.
 	 */
-	public static native void testliaison();
+	public native void testliaison();
+	
+	/**
+	 * Toggle engine liaison debugging.  
+	 * @param onOrOff if true, the JNI liaison layer prints debug
+	 * messasges to stdout.  false to turn debugging off. 
+	 */
+	public native void debugMode(boolean onOrOff);
 	
 	/**
 	 * Initialize the engine.  Sets up the engine, starts a new game
-	 * and gets the engine ready to accept commands.
+	 * and gets the engine ready to accept commands.  
+	 * 
+	 * You should call init_engine() before trying to interact with the 
+	 * engine or you risk crashing the VM.
+	 * 
 	 * @return true if successful
 	 */	
-	public static native boolean init_engine();
+	public native boolean init_engine();
 	
 	/**
 	 * Print a string representation of the current chess board
 	 * and the locations of all the pieces to stdout.
 	 */
-	public static native void show_board();
+	public native void show_board();
 	
 	/**
 	 * Get a String representation of the current chess board.
 	 * @return String representing the current chess board
 	 * and all the pieces
 	 */
-	public static native String board_as_string();
+	public native String board_as_string();
 	
 	/**
 	 * Query the engine and build a model of the chess board and pieces
-	 * @param oldBoard if provided, updates an existing board instead
-	 * of creating a new one.  If oldBoard is null, will create
-	 * a new board.  TODO: need to implement 
-	 * , <b>null board currently returns null</b>
+	 * @param oldBoard Board object that will be updated and sync'd with
+	 * the engine's chess board model.  Passing in null will cause board()
+	 * to return null.
 	 * @return a Board object which matches the state of the engine's
-	 * chess board.  
+	 * chess board.  This is only for convenience; the board
+	 * instance passed in is really the same instance as the one
+	 * returned.
 	 */
-	public static native Board board(Board oldBoard);
+	public native Board board(Board oldBoard);
 	
 	
 	/**
@@ -60,7 +72,7 @@ public class Liaison {
 	 * Algebraic Notation) format.
 	 * @return true if the move is valid
 	 */
-	public static native boolean validate_move(String sanMove);
+	public native boolean validate_move(String sanMove);
 	
 	/**
 	 * Ask the engine to run the specified command string.  This isn't
@@ -71,18 +83,18 @@ public class Liaison {
 	 * TODO native implementation does not currently return the string
 	 * only prints to stdout 
 	 */
-	public static native String input_cmd(String engineCommand);
+	public native String input_cmd(String engineCommand);
 	
 	/**
 	 * Ask the engine to make the specified move.
 	 * @param sanMove String of the move to test, in SAN (Standard
 	 * Algebraic Notation) format.
 	 */
-	public static native boolean doMove(String sanMove);
+	public native boolean doMove(String sanMove);
 	
 	/**
 	 * Allow the computer to make a move.
 	 */
-	public static native void iterate();
+	public native void iterate();
 	
 }
