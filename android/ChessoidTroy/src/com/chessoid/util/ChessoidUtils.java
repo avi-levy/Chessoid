@@ -1,5 +1,7 @@
 package com.chessoid.util;
 
+import com.chessoid.model.Pieces;
+
 public class ChessoidUtils {
 
 	
@@ -65,4 +67,85 @@ public class ChessoidUtils {
 		}
 		return colnum;
 	}
+	
+	/**
+	 * Find the SAN (Standard Algebraic Notation) character
+	 * that represented the specified type of chess piece.
+	 * @param Pieces type from the Pieces enum
+	 * @return char representation of the piece, e.g. 'p' for
+	 * black pawn, 'P' for white pawn.  Returns '\0' for the 
+	 * Pieces.EMPTY type.
+	 */
+	public static char translateSANPiece(Pieces piece) {
+		switch(piece) {
+			case BLACK_PAWN:
+				return 'p';
+			case BLACK_ROOK:
+				return 'r';
+			case BLACK_KNIGHT:
+				return 'n';
+			case BLACK_BISHOP:
+				return 'b';
+			case BLACK_QUEEN:
+				return 'q';
+			case BLACK_KING:
+				return 'k';
+			case WHITE_PAWN:
+				return 'P';
+			case WHITE_ROOK:
+				return 'R';
+			case WHITE_KNIGHT:
+				return 'N';
+			case WHITE_BISHOP:
+				return 'B';
+			case WHITE_QUEEN:
+				return 'Q';
+			case WHITE_KING:
+				return 'K';
+			default:
+				return '\0';				
+		}
+	}
+	
+	/**
+	 * Find the Pieces enum type associated with the SAN
+	 * (Standard Algebraic Notation) character provied.
+	 * e.g. 'p' resolves to Pieces.BLACK_PAWN, 'P' resolves
+	 * to Pieces.WHITE_PAWN.
+	 * @param sanChar the character that represents a piece in SAN.
+	 * @return the Pieces enum representation of the piece type.
+	 * Returns Pieces.EMPTY if the char doesn't match any piece type.
+	 */
+	public static Pieces translateSANPiece(char sanChar) {
+			switch (sanChar) {
+				case 'p':
+					return Pieces.BLACK_PAWN;
+				case 'r':
+					return Pieces.BLACK_ROOK;
+				case 'n':
+					return Pieces.BLACK_KNIGHT;
+				case 'b':
+					return Pieces.BLACK_BISHOP;
+				case 'q':
+					return Pieces.BLACK_QUEEN;
+				case 'k':
+					return Pieces.BLACK_KING;
+				case 'P':
+					return Pieces.WHITE_PAWN;
+				case 'R':
+					return Pieces.WHITE_ROOK;
+				case 'N':
+					return Pieces.WHITE_KNIGHT;
+				case 'B':
+					return Pieces.WHITE_BISHOP;
+				case 'Q':
+					return Pieces.WHITE_QUEEN;
+				case 'K':
+					return Pieces.WHITE_KING;
+				default:
+					return Pieces.EMPTY;
+			}
+	}
+	
+	
 }
