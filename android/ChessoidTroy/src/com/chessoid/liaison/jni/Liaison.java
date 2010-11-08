@@ -1,94 +1,124 @@
 package com.chessoid.liaison.jni;
 
+import java.util.StringTokenizer;
+
 import com.chessoid.model.Board;
 
+/**
+ * The JNI interface layer between the GNU chess engine (in C)
+ * and the Java application.
+ * 
+ * @author troy
+ *
+ */
 public class Liaison {
-	
-	public static final Liaison INSTANCE = new Liaison(); 
-	
-	boolean debug = false;
-	
-	Board board = new Board();
 
-	void debug(String msg) {
-		if (debug) System.out.println("MOCK LIAISON: ".concat(msg));
+	static {
+		System.loadLibrary("chess");
 	}
 	
-	void setupBoard() {
-		if (null == board) board = new Board();
-		board.setPieceAt('r', 1, 8);
-		board.setPieceAt('n', 2, 8);
-		board.setPieceAt('b', 3, 8);
-		board.setPieceAt('q', 4, 8);
-		board.setPieceAt('k', 5, 8);
-		board.setPieceAt('b', 6, 8);
-		board.setPieceAt('n', 7, 8);
-		board.setPieceAt('r', 8, 8);
-		for (int c=1; c <= 8; c++)
-			board.setPieceAt('p', c, 7);
-		board.setPieceAt('R', 1, 1);
-		board.setPieceAt('N', 2, 1);
-		board.setPieceAt('B', 3, 1);
-		board.setPieceAt('Q', 4, 1);
-		board.setPieceAt('K', 5, 1);
-		board.setPieceAt('B', 6, 1);
-		board.setPieceAt('N', 7, 1);
-		board.setPieceAt('R', 8, 1);
-		for (int c=1; c <=8; c++)
-			board.setPieceAt('P', c, 2);
-	}
+	public static final Liaison INSTANCE = new Liaison();
 	
-	public void testliaison() {
-		debug("test mock liaison.");
-	}
+	/**
+	 * Method to test that we can connect to the engine.  Asks the engine
+	 * to print its version number to stdout.
+	 */
+	public native void testliaison();
 	
-	public void debugMode(boolean onOrOff) { 
-		if (onOrOff) System.out.println("MOCK LIAISON: debug mode ON.");
-		else System.out.println("MOCK LIAISON: debug mode OFF.");
-	}
+	/**
+	 * Toggle engine liaison debugging.  
+	 * @param onOrOff if true, the JNI liaison layer prints debug
+	 * messasges to stdout.  false to turn debugging off. 
+	 */
+	public native void debugMode(boolean onOrOff);
 	
-	public boolean init_engine() {
-		setupBoard();
-		debug("mock engine initialized.");
-		return true;		
-	}
+	/**
+	 * Initialize the engine.  Sets up the engine, starts a new game
+	 * and gets the engine ready to accept commands.  
+	 * 
+	 * You should call init_engine() before trying to interact with the 
+	 * engine or you risk crashing the VM.
+	 * 
+	 * @return true if successful
+	 */	
+	public native boolean init_engine();
 	
-	public void show_board() {
-		System.out.println(board.toString());
-	}
+	/**
+	 * Print a string representation of the current chess board
+	 * and the locations of all the pieces to stdout.
+	 */
+	public native void show_board();
 	
-	public String board_as_string() {
-		return board.toString();
-	}
+	/**
+	 * Get a String representation of the current chess board.
+	 * @return String representing the current chess board
+	 * and all the pieces
+	 */
+	public native String board_as_string();
 	
+	/**
+	 * Query the engine and build a model of the chess board and pieces
+	 * @param oldBoard Board object that will be updated and sync'd with
+	 * the engine's chess board model.  Passing in null will cause board()
+	 * to return null.
+	 * @return a Board object which matches the state of the engine's
+	 * chess board.  This is only for convenience; the board
+	 * instance passed in is really the same instance as the one
+	 * returned.
+	 */
+//	public native Board board(Board oldBoard);	// XXX temp until the native version works.
 	public Board board(Board oldBoard) {
-		debug("returning passed in board unchanged.");
-		for (int r=1; r <=8; r++) {
-			for (int c=1; c <=8; c++) {
-				char p = this.board.getPieceAt(c, r);
-				oldBoard.setPieceAt(p, c, r);
+		if (null != oldBoard) {
+			String board = this.board_as_string();
+			StringTokenizer rows = new StringTokenizer(board, "\n");
+			int r=8;
+			while (rows.hasMoreTokens()) {
+				int c=1;
+				String row = rows.nextToken();
+				StringTokenizer cols = new StringTokenizer(row);
+				while (cols.hasMoreTokens()) {
+					String next = cols.nextToken().trim();
+					char col = next.equals(".") ? '\0' : next.toCharArray()[0];
+					oldBoard.setPieceAt(col, c, r);
+					c++;
+				}
+				r--;
 			}
 		}
 		return oldBoard;
 	}
 	
-	public boolean validate_move(String sanMove) {
-		debug("validating move: ".concat(sanMove.concat(" (mock always returns true)")));
-		return true;
-	}
 	
-	public String input_cmd(String engineCommand) {
-		debug("mock input command: ".concat(engineCommand));
-		return null;
-	}
+	/**
+	 * Ask the engine to test if a specified move is valid on the current
+	 * chess board.
+	 * @param sanMove String of the move to test, in SAN (Standard
+	 * Algebraic Notation) format.
+	 * @return true if the move is valid
+	 */
+	public native boolean validate_move(String sanMove);
 	
-	public boolean doMove(String sanMove) {
-		debug("mock doMove: ".concat(sanMove).concat(" (doesnt really do anything)"));
-		return true;
-	}
+	/**
+	 * Ask the engine to run the specified command string.  This isn't
+	 * very well-tested.
+	 * @param engineCommand String representing an engine command, e.g 
+	 * a SAN (Standard Algebraic Notation) move.
+	 * @return response from the engine as a String
+	 * TODO native implementation does not currently return the string
+	 * only prints to stdout 
+	 */
+	public native String input_cmd(String engineCommand);
 	
-	public void iterate() {
-		debug("mock engine iteration...doesnt really do anything");
-	}
+	/**
+	 * Ask the engine to make the specified move.
+	 * @param sanMove String of the move to test, in SAN (Standard
+	 * Algebraic Notation) format.
+	 */
+	public native boolean doMove(String sanMove);
+	
+	/**
+	 * Allow the computer to make a move.
+	 */
+	public native void iterate();
 	
 }

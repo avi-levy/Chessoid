@@ -32,7 +32,8 @@ public class MoveListener implements OnClickListener {
 				clipboard = tv;
 				return;
 			}
-			controller.doMove(clipboard, tv); 
+			controller.doMove(clipboard, tv);
+			clipboard = null;
 		}
 	}
 }

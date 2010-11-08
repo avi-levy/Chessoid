@@ -150,7 +150,7 @@ public class ChessController {
      * Update the UI to match what's in the chess board model.
      */
     public void syncModels() {
-    	Liaison.INSTANCE.board(board);
+    	board = Liaison.INSTANCE.board(board);
     	for (int r=1; r <= 8; r++) {
     		for (int c=1; c <=8; c++) {
     			chessTiles.get(ChessoidUtils.translateCol(c)+r)
@@ -180,10 +180,14 @@ public class ChessController {
 		sanMove.append(to.row);
 		if (!Liaison.INSTANCE.doMove(sanMove.toString())) {
 			updateStatusView(context.getString(R.string.invalid_move).concat(": ").concat(sanMove.toString()));
+			return;
 		}
 		else {
 			updateStatusView("");
 		}
+		syncModels();
+		updateStatusView("Thinking...");
+		Liaison.INSTANCE.iterate();
 		syncModels();
 	}
 
