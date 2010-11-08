@@ -96,6 +96,16 @@ public class TestLiaison extends TestCase {
 		move = "z22";
 		valid = liaison.validate_move(move);
 		assertFalse("Move (" + move + ")expected to be invalid, but was valid", valid);
+		move = "pa4";
+		valid = liaison.validate_move(move);
+		assertFalse("Move (" + move + ")expected to be invalid, but was valid", valid);
+		move = "Pa4";
+		valid = liaison.validate_move(move);
+		assertFalse("Move (" + move + ")expected to be invalid, but was valid", valid);
+		move = "B4";
+		valid = liaison.validate_move(move);
+		assertFalse("Move (" + move + ")expected to be invalid, but was valid", valid);
+
 	}
 	
 	public void testInputCmd() {	// TODO this whole input cmd stuff doesn't work well, do we even need it?

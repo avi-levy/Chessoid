@@ -3,6 +3,7 @@ package com.chessoid.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.TableLayout;
@@ -166,17 +167,22 @@ public class ChessController {
 	 * chess engine, via the JNI liaison layer.
 	 */
 	// TODO account for castling and en passant
-	// TODO does this fail if clipboard is null or empty ?
-    // TODO initiate engine iteration after successful move
+	// TODO testme, does this fail if clipboard is null or empty ?
+    // TODO testme, make sure to test pawn capture 
     public void doMove(ChessTileView from, ChessTileView to) {
 		// init sanMove w/ char representing the piece at the source location
 		Pieces pieceToMove = from.getChessPiece();
-		StringBuilder sanMove = new StringBuilder(Character.toString(ChessoidUtils.translateSANPiece(pieceToMove)));
+		StringBuilder sanMove = new StringBuilder();
+		String sanPieceChar = Character.toString(ChessoidUtils.translateSANPiece(pieceToMove));
+		if (!"P".equals(sanPieceChar.toUpperCase())) {
+			sanMove.append(sanPieceChar);
+		}
 		Pieces victim = to.getChessPiece();
 		if (victim != Pieces.EMPTY) {
+			sanMove.append(ChessoidUtils.translateCol(from.col).toLowerCase());
 			sanMove.append("x");
 		}
-		sanMove.append(ChessoidUtils.translateCol(to.col));	// XXX remove P for pawns ?
+		sanMove.append(ChessoidUtils.translateCol(to.col).toLowerCase());
 		sanMove.append(to.row);
 		if (!Liaison.INSTANCE.doMove(sanMove.toString())) {
 			updateStatusView(context.getString(R.string.invalid_move).concat(": ").concat(sanMove.toString()));
@@ -188,7 +194,7 @@ public class ChessController {
 		syncModels();
 		updateStatusView("Thinking...");
 		Liaison.INSTANCE.iterate();
+		updateStatusView("");
 		syncModels();
 	}
-
 }

@@ -129,8 +129,8 @@ public class Board {
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		for (int r=COLS; r >= 1; r--) {
-			for (int c=1; c <= ROWS; c++) {
+		for (int r=ROWS; r >= 1; r--) {
+			for (int c=1; c <= COLS; c++) {
 				if ('\0' == getPieceAt(c, r)) {
 					str.append(". ");
 				} else { 

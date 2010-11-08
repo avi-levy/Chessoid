@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.chessoid.app.R;
 import com.chessoid.model.Pieces;
+import com.chessoid.util.ChessoidUtils;
 
 /**
  * Works like a standard TextView but allows us to ask
@@ -90,4 +91,8 @@ public class ChessTileView extends TextView {
 		return piece;
 	}
 	
+	public String toString() {
+		return ChessoidUtils.translateCol(this.col).concat(""+row);
+	}
+
 }
