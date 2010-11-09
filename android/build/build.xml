@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Chessoid Main" default="main">
+	
+	<property name="android.sdk.dir"		location="/opt/android/android-sdk-linux_x86/"/>
+	<property name="android.ndk.dir"		location="/opt/android/android-ndk-r4b/"/>
+	<property name="chessoid.project.dir"	location="../Chessoid/"/>
+	<property name="chessoid.ant.buildfile"	location="${chessoid.project.dir}/build.xml"/>
+	<property name="chessoid.jni.dir"		location="${chessoid.project.dir}/jni/"/>
+	<property name="gnuchess.src.dir"		location="../liaison/chess/src"/>
+	<property name="build.output.dir"		location="./output"/>
+	
+	<target name="main" depends="clean">
+		<antcall target="compile-native"/>
+		<ant antfile="${chessoid.ant.buildfile}" dir="${chessoid.project.dir}" target="clean">
+			<property name="sdk.dir" value="${android.sdk.dir}"/>
+			<property name="includeantruntime" value="false"/>
+		</ant>
+		<ant antfile="${chessoid.ant.buildfile}" dir="${chessoid.project.dir}" target="debug">
+			<property name="sdk.dir" value="${android.sdk.dir}"/>
+			<property name="includeantruntime" value="false"/>
+		</ant>
+		<copy todir="${build.output.dir}" file="${chessoid.project.dir}/bin/Chessoid-debug.apk"/>
+	</target>
+	
+	<target name="compile-native">
+		<copy todir="${chessoid.jni.dir}">
+			<fileset dir="${gnuchess.src.dir}"/>
+		</copy>
+		<exec executable="${android.ndk.dir}/ndk-build" failonerror="true" dir="${chessoid.jni.dir}"/>
+	</target>
+	
+	<target name="clean">
+		<delete>
+			<fileset dir="${chessoid.jni.dir}">
+				<include name="**/*.c"/>
+				<include name="**/*.h"/>
+				<include name="**/*.in"/>
+			</fileset>
+		</delete>
+		<delete dir="${chessoid.project.dir}/gen"/>
+		<delete dir="${chessoid.project.dir}/obj"/>
+		<delete dir="${chessoid.project.dir}/libs"/>
+		<delete dir="${build.output.dir}"/>
+		<mkdir dir="${build.output.dir}"/>
+	</target>
+	
+</project>
