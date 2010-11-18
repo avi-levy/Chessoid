@@ -66,6 +66,15 @@
                                     <g:textField name="description" value="${taskInstance?.description}" />
                                 </td>
                             </tr>
+                            
+                            <tr class="prop">
+                            	<td valign="top" class="name">
+                            		<label for="completed"><g:message code="task.completed.label" default="Completed"/></label>
+                            	</td>
+                            	<td>
+                            		<g:checkBox name="completed" value="${taskInstance?.completed}"/>
+                            	</td>
+                            </tr>
                         
                         </tbody>
                     </table>

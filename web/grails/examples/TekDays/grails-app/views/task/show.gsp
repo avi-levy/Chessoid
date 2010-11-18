@@ -22,40 +22,41 @@
                 <table>
                     <tbody>
                     
+                    	<!-- ID -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="task.id.label" default="Id" /></td>
-                            
                             <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "id")}</td>
-                            
                         </tr>
                     
+                    	<!-- TITLE -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="task.title.label" default="Title" /></td>
-                            
                             <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "title")}</td>
-                            
                         </tr>
                     
+                    	<!-- ASSIGNED TO -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="task.assignedTo.label" default="Assigned To" /></td>
-                            
                             <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "assignedTo")}</td>
-                            
                         </tr>
                     
+                    	<!-- DUE DATE -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="task.dueDate.label" default="Due Date" /></td>
-                            
                             <td valign="top" class="value"><g:formatDate date="${taskInstance?.dueDate}" /></td>
-                            
                         </tr>
                     
+                    	<!-- DESCRIPTION -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="task.description.label" default="Description" /></td>
-                            
                             <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "description")}</td>
-                            
                         </tr>
+                        
+                        <!-- COMPLETED? -->
+                    	<tr class="prop">
+                    		<td valign="top" class="name"><g:message code="task.completed.label" default="Completed"/></td>
+                    		<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "completed") }</td>
+                    	</tr>
                     
                     </tbody>
                 </table>

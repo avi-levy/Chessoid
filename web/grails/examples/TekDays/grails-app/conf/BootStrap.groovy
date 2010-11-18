@@ -1,5 +1,6 @@
 import tekdays.Sponsor 
 import tekdays.Sponsorship 
+import tekdays.TaskService 
 import tekdays.TekEvent 
 import tekdays.TekUser 
 
@@ -96,6 +97,9 @@ class BootStrap {
 					println "An error occured with event2: ${error}"
 				}
 			}
+			def taskService = new TaskService()
+//			taskService.addDefaultTasks(event1)
+//			taskService.addDefaultTasks(event2)
 			/*
 			 * SPONSORS	
 			 */

@@ -118,7 +118,7 @@
                                 <td valign="top" class="value ${hasErrors(bean: tekEventInstance, field: 'sponsorships', 'errors')}">
 									<ul>
 										<g:each in="${tekEventInstance?.sponsorships?}" var="s">
-	    									<li><g:link controller="sponsorship" action="show" id="${s.id}">${s?.encodeAsHTML()}</g:link></li>
+	    									<li><g:link controller="sponsorship" action="show" id="${s.id}">${s.sponsor?.encodeAsHTML()}</g:link></li>
 										</g:each>
 									</ul>
 									<g:link controller="sponsorship" action="create" 
@@ -134,7 +134,10 @@
                                   <label for="tasks"><g:message code="tekEvent.tasks.label" default="Tasks" /></label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean: tekEventInstance, field: 'tasks', 'errors')}">
-                                    <g:select name="tasks" from="${tekdays.Task.list()}" multiple="yes" optionKey="id" size="5" value="${tekEventInstance?.tasks*.id}" />
+                                    <g:if test="${tekdays.Task.list()}">
+                                    	<g:select name="tasks" from="${tekdays.Task.list()}" multiple="yes" optionKey="id" size="5" value="${tekEventInstance?.tasks*.id}" />
+                                    </g:if>
+                                    <br/><g:link controller="task" action="create">Add Task</g:link>
                                 </td>
                             </tr>
                         	
@@ -175,6 +178,7 @@
                     <span class="button"><g:actionSubmit class="delete" action="delete" 
                     	value="${message(code: 'default.button.delete.label', default: 'Delete')}" 
                     	onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" /></span>
+                    <span class="button"><g:actionSubmit class="cancel" action="show" value="Cancel"/></span>
                 </div>
             </g:form>
         </div>

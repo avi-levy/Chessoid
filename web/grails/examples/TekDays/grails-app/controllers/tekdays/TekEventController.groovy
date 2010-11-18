@@ -1,6 +1,8 @@
 package tekdays
 
 class TekEventController {
+	
+	def taskService		// <-- gets auto-wired to an instance of TaskService based on naming convention 
 
 	// the delete, save and update actions only accept POST requests
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
@@ -38,9 +40,11 @@ class TekEventController {
 	// 'save' for existing instances and so needs protection against concurrent modification)
     def save = {
         def tekEventInstance = new TekEvent(params)
-        if (tekEventInstance.save(flush: true)) {
+        if (tekEventInstance.save()) {
             flash.message = "${message(code: 'default.created.message', args: [message(code: 'tekEvent.label', default: 'TekEvent'), tekEventInstance.id])}"
-            redirect(action: "show", id: tekEventInstance.id)
+            taskService.addDefaultTasks(tekEventInstance)
+			tekEventInstance.save(flush:true)				// <-- really push it out to DB *now* 
+			redirect(action: "show", id: tekEventInstance.id)
         }
         else {
             render(view: "create", model: [tekEventInstance: tekEventInstance])
