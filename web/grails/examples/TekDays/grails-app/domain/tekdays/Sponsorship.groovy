@@ -15,4 +15,6 @@ class Sponsorship {
 		description nullable:true, blank:true
 		notes nullable:true, blank:true, maxSize:5000
     }
+	
+	String toString() { "${sponsor.toString()} is sponsoring ${event?.name}" }
 }
