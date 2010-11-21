@@ -117,35 +117,33 @@ public class ChessoidUtils {
 	 * Returns Pieces.EMPTY if the char doesn't match any piece type.
 	 */
 	public static Pieces translateSANPiece(char sanChar) {
-			switch (sanChar) {
-				case 'p':
-					return Pieces.BLACK_PAWN;
-				case 'r':
-					return Pieces.BLACK_ROOK;
-				case 'n':
-					return Pieces.BLACK_KNIGHT;
-				case 'b':
-					return Pieces.BLACK_BISHOP;
-				case 'q':
-					return Pieces.BLACK_QUEEN;
-				case 'k':
-					return Pieces.BLACK_KING;
-				case 'P':
-					return Pieces.WHITE_PAWN;
-				case 'R':
-					return Pieces.WHITE_ROOK;
-				case 'N':
-					return Pieces.WHITE_KNIGHT;
-				case 'B':
-					return Pieces.WHITE_BISHOP;
-				case 'Q':
-					return Pieces.WHITE_QUEEN;
-				case 'K':
-					return Pieces.WHITE_KING;
-				default:
-					return Pieces.EMPTY;
-			}
+		switch (sanChar) {
+			case 'p':
+				return Pieces.BLACK_PAWN;
+			case 'r':
+				return Pieces.BLACK_ROOK;
+			case 'n':
+				return Pieces.BLACK_KNIGHT;
+			case 'b':
+				return Pieces.BLACK_BISHOP;
+			case 'q':
+				return Pieces.BLACK_QUEEN;
+			case 'k':
+				return Pieces.BLACK_KING;
+			case 'P':
+				return Pieces.WHITE_PAWN;
+			case 'R':
+				return Pieces.WHITE_ROOK;
+			case 'N':
+				return Pieces.WHITE_KNIGHT;
+			case 'B':
+				return Pieces.WHITE_BISHOP;
+			case 'Q':
+				return Pieces.WHITE_QUEEN;
+			case 'K':
+				return Pieces.WHITE_KING;
+			default:
+				return Pieces.EMPTY;
+		}
 	}
-	
-	
 }

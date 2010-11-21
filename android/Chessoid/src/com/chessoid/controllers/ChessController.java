@@ -3,7 +3,6 @@ package com.chessoid.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.TableLayout;
@@ -45,12 +44,12 @@ public class ChessController {
 	 * Map of all the tiles on the board, keyed by strings
 	 * representing the coords on the grid, e.g. 'E6'
 	 */
-	private Map<String, ChessTileView> chessTiles;
+	Map<String, ChessTileView> chessTiles;
 	
 	/** 
 	 * Status bar at the bottom of the screen. 
 	 */
-	private TextView statusView;
+	TextView statusView;
 	
 	/**
 	 * Construct a controller for the specified context.
