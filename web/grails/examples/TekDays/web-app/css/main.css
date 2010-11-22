@@ -275,4 +275,14 @@ th.desc a {
 	background: transparent url(../images/skin/exclamation.png) 5px 50% no-repeat;
 	padding-left: 28px
 }
+
+/* Message Create */
+.messageField {
+	width: 550px
+}
+
+/* Ajaxlist */
+#messageList {
+	overflow:auto	
+}
 	

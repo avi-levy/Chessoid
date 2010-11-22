@@ -22,46 +22,43 @@
                 <table>
                     <tbody>
                     
+                    	<!-- ID -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="message.id.label" default="Id" /></td>
-                            
                             <td valign="top" class="value">${fieldValue(bean: messageInstance, field: "id")}</td>
-                            
                         </tr>
                     
+                    	<!-- SUBJECT -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="message.subject.label" default="Subject" /></td>
-                            
                             <td valign="top" class="value">${fieldValue(bean: messageInstance, field: "subject")}</td>
-                            
                         </tr>
                     
+                    	<!-- CONTENT -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="message.content.label" default="Content" /></td>
-                            
                             <td valign="top" class="value">${fieldValue(bean: messageInstance, field: "content")}</td>
-                            
                         </tr>
                     
+                    	<!-- PARENT -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="message.parent.label" default="Parent" /></td>
-                            
-                            <td valign="top" class="value"><g:link controller="message" action="show" id="${messageInstance?.parent?.id}">${messageInstance?.parent?.encodeAsHTML()}</g:link></td>
-                            
+                            <td valign="top" class="value">
+                            	<g:link controller="message" action="show" id="${messageInstance?.parent?.id}">
+                            		${messageInstance?.parent?.encodeAsHTML()}
+                            	</g:link></td>
                         </tr>
-                    
+
+						<!-- AUTHOR -->                    
                         <tr class="prop">
-                            <td valign="top" class="name"><g:message code="message.author.label" default="Author" /></td>
-                            
+                            <td valign="top" class="name"><g:message code="message.author.label" default="Author" /></td>        
                             <td valign="top" class="value"><g:link controller="tekUser" action="show" id="${messageInstance?.author?.id}">${messageInstance?.author?.encodeAsHTML()}</g:link></td>
-                            
                         </tr>
                     
+                    	<!-- EVENT -->
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="message.event.label" default="Event" /></td>
-                            
                             <td valign="top" class="value"><g:link controller="tekEvent" action="show" id="${messageInstance?.event?.id}">${messageInstance?.event?.encodeAsHTML()}</g:link></td>
-                            
                         </tr>
                     
                     </tbody>

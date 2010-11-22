@@ -10,14 +10,36 @@ class MessageController {
 
     def list = {
         params.max = Math.min(params.max ? params.int('max') : 10, 100)
-        [messageInstanceList: Message.list(params), messageInstanceTotal: Message.count()]
+		def list
+		def count
+		def event = TekEvent.get(params.id)
+		if (event) {
+			list = Message.findAllByEvent(event, params)
+			count = Message.countByEvent(event)
+		} 
+		else {
+			list = Message.list(params)
+			count = Message.count()	
+		}
+		render(
+			view:'ajaxList', 
+			model:[messageInstanceList: list, messageInstanceTotal: count, event: event])
     }
 
     def create = {
         def messageInstance = new Message()
         messageInstance.properties = params
+		println "PARAMS: $params"	// TODO : remove
         return [messageInstance: messageInstance]
     }
+	
+	def reply = {
+		def parent = Message.get(params.id)
+		def messageInstance = new Message(parent:parent, event:parent.event, subject:"RE: ${parent.subject}")
+		render(
+			view:'create', 
+			model:['messageInstance':messageInstance])
+	}
 
     def save = {
         def messageInstance = new Message(params)
@@ -40,6 +62,16 @@ class MessageController {
             [messageInstance: messageInstance]
         }
     }
+	
+	def showDetail = {
+		def messageInstance = Message.get(params.id)
+		if (messageInstance) {
+			render template:"details", model:[messageInstance:messageInstance]
+		}
+		else {
+			render "No message found with id: ${params.id}"
+		}
+	}
 
     def edit = {
         def messageInstance = Message.get(params.id)

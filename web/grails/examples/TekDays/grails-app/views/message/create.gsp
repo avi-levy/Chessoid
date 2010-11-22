@@ -9,12 +9,22 @@
         <title><g:message code="default.create.label" args="[entityName]" /></title>
     </head>
     <body>
+    
         <div class="nav">
-            <span class="menuButton"><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></span>
-            <span class="menuButton"><g:link class="list" action="list"><g:message code="default.list.label" args="[entityName]" /></g:link></span>
+            <span class="menuButton">
+            	<a class="home" href="${createLink(uri: '/')}">
+            		<g:message code="default.home.label"/>
+            	</a>
+            </span>
+            <span class="menuButton">
+            	<g:link class="list" action="list" id="${messageInstance?.event?.id}">
+            		<g:message code="default.list.label" args="[entityName]"/>
+            	</g:link>
+            </span>
         </div>
+        
         <div class="body">
-            <h1><g:message code="default.create.label" args="[entityName]" /></h1>
+            <h1>${messageInstance?.event?.name} Forum - New Message</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -28,33 +38,40 @@
                     <table>
                         <tbody>
                         
+                            <!-- PARENT (if this message is a reply) -->
+                            <g:if test="${messageInstance.parent}">
+                            	<input type="hidden" name="parent.id" value="${messageInstance.parent.id}"/>
+	                            <tr class="prop">
+	                                <td valign="top" class="name">
+	                                    <label for="parent"><g:message code="message.reply.label" default="In Reply to:" /></label>
+	                                </td>
+	                                <td valign="top" class="value ${hasErrors(bean: messageInstance, field: 'parent', 'errors')}">
+	                                    ${messageInstance.parent.author}
+	                                </td>
+	                            </tr>
+                            </g:if>
+                        
+                        	<!-- SUBJECT -->
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="subject"><g:message code="message.subject.label" default="Subject" /></label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean: messageInstance, field: 'subject', 'errors')}">
-                                    <g:textField name="subject" value="${messageInstance?.subject}" />
+                                    <g:textField class= "messageField" name="subject" value="${messageInstance?.subject}" />
                                 </td>
                             </tr>
                         
+                        	<!-- CONTENT -->
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="content"><g:message code="message.content.label" default="Content" /></label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean: messageInstance, field: 'content', 'errors')}">
-                                    <g:textArea name="content" cols="40" rows="5" value="${messageInstance?.content}" />
+                                    <g:textArea class="messageField" name="content" cols="40" rows="5" value="${messageInstance?.content}" />
                                 </td>
                             </tr>
                         
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="parent"><g:message code="message.parent.label" default="Parent" /></label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean: messageInstance, field: 'parent', 'errors')}">
-                                    <g:select name="parent.id" from="${tekdays.Message.list()}" optionKey="id" value="${messageInstance?.parent?.id}" noSelection="['null': '']" />
-                                </td>
-                            </tr>
-                        
+                        	<!-- AUTHOR -->
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="author"><g:message code="message.author.label" default="Author" /></label>
@@ -64,14 +81,18 @@
                                 </td>
                             </tr>
                         
-                            <tr class="prop">
+                        	<!-- EVENT (hidden) -->
+                        	<%-- This is hidden from view because we don't need the user to select which event the message is for,
+                        			but we do need this information (which event) available for when we submit the form --%>
+                          	<input type="hidden" name="event.id" value="${messageInstance?.event?.id}"/>
+                          	<%-- <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="event"><g:message code="message.event.label" default="Event" /></label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean: messageInstance, field: 'event', 'errors')}">
                                     <g:select name="event.id" from="${tekdays.TekEvent.list()}" optionKey="id" value="${messageInstance?.event?.id}"  />
                                 </td>
-                            </tr>
+                            </tr> --%>
                         
                         </tbody>
                     </table>
