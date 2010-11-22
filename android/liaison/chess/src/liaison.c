@@ -127,31 +127,31 @@ JNIEXPORT jobject JNICALL Java_com_chessoid_liaison_jni_Liaison_board
 		for (c=0; c < 8; c++){
 			sq = r + c;
 			if (board.b[white][pawn] & BitPosArray[sq])
-				(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'P', c+1, (r/8)+1);
+				(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'P', c+1, (r/8)+1);
 			else if (board.b[white][knight] & BitPosArray[sq])
-				(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'N', c+1, (r/8)+1);
+				(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'N', c+1, (r/8)+1);
 	        else if (board.b[white][bishop] & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'B', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'B', c+1, (r/8)+1);
 	        else if (board.b[white][rook]   & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'R', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'R', c+1, (r/8)+1);
 	        else if (board.b[white][queen]  & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'Q', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'Q', c+1, (r/8)+1);
 	        else if (board.b[white][king]   & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'K', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'K', c+1, (r/8)+1);
 	        else if (board.b[black][pawn]   & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'p', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'p', c+1, (r/8)+1);
 	        else if (board.b[black][knight] & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'n', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'n', c+1, (r/8)+1);
 	        else if (board.b[black][bishop] & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'b', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'b', c+1, (r/8)+1);
 	        else if (board.b[black][rook]   & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'r', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'r', c+1, (r/8)+1);
 	        else if (board.b[black][queen]  & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'q', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'q', c+1, (r/8)+1);
 	        else if (board.b[black][king]   & BitPosArray[sq])
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, 'k', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, 'k', c+1, (r/8)+1);
 	        else
-	        	(*env)->CallObjectMethod(env, jBoard, mSetPiece, '\0', c+1, (r/8)+1);
+	        	(*env)->CallVoidMethod(env, jBoard, mSetPiece, '\0', c+1, (r/8)+1);
 		}
 	}
 

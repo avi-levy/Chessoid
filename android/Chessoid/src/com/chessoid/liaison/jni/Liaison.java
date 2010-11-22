@@ -1,7 +1,5 @@
 package com.chessoid.liaison.jni;
 
-import java.util.StringTokenizer;
-
 import com.chessoid.model.Board;
 
 /**
@@ -66,28 +64,7 @@ public class Liaison {
 	 * instance passed in is really the same instance as the one
 	 * returned.
 	 */
-//	public native Board board(Board oldBoard);	// XXX temp until the native version works.
-	public Board board(Board oldBoard) {
-		if (null != oldBoard) {
-			String board = this.board_as_string();
-			StringTokenizer rows = new StringTokenizer(board, "\n");
-			int r=8;
-			while (rows.hasMoreTokens()) {
-				int c=1;
-				String row = rows.nextToken();
-				StringTokenizer cols = new StringTokenizer(row);
-				while (cols.hasMoreTokens()) {
-					String next = cols.nextToken().trim();
-					char col = next.equals(".") ? '\0' : next.toCharArray()[0];
-					oldBoard.setPieceAt(col, c, r);
-					c++;
-				}
-				r--;
-			}
-		}
-		return oldBoard;
-	}
-	
+	public native Board board(Board oldBoard);	
 	
 	/**
 	 * Ask the engine to test if a specified move is valid on the current
