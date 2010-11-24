@@ -1,7 +1,8 @@
 <html>
     <head>
-        <title>Welcome to Grails</title>
+        <title>TekDays</title>
         <meta name="layout" content="main" />
+        <%--
         <style type="text/css" media="screen">
 
         #nav {
@@ -49,52 +50,45 @@
             margin-right:20px;
         }
         </style>
+        --%>
     </head>
     <body>
-        <div id="nav">
-            <div class="homePagePanel">
-                <div class="panelTop"></div>
-                <div class="panelBody">
-                    <h1>Application Status</h1>
-                    <ul>
-                        <li>App version: <g:meta name="app.version"></g:meta></li>
-                        <li>Grails version: <g:meta name="app.grails.version"></g:meta></li>
-                        <li>Groovy version: ${org.codehaus.groovy.runtime.InvokerHelper.getVersion()}</li>
-                        <li>JVM version: ${System.getProperty('java.version')}</li>
-                        <li>Controllers: ${grailsApplication.controllerClasses.size()}</li>
-                        <li>Domains: ${grailsApplication.domainClasses.size()}</li>
-                        <li>Services: ${grailsApplication.serviceClasses.size()}</li>
-                        <li>Tag Libraries: ${grailsApplication.tagLibClasses.size()}</li>
-                    </ul>
-                    <h1>Installed Plugins</h1>
-                    <ul>
-                        <g:set var="pluginManager"
-                               value="${applicationContext.getBean('pluginManager')}"></g:set>
-
-                        <g:each var="plugin" in="${pluginManager.allPlugins}">
-                            <li>${plugin.name} - ${plugin.version}</li>
-                        </g:each>
-
-                    </ul>
-                </div>
-                <div class="panelBtm"></div>
-            </div>
-        </div>
-        <div id="pageBody">
-            <h1>Welcome to Grails</h1>
-            <p>Congratulations, you have successfully started your first Grails application! At the moment
-            this is the default page, feel free to modify it to either redirect to a controller or display whatever
-            content you may choose. Below is a list of controllers that are currently deployed in this application,
-            click on each to execute its default action:</p>
-
-            <div id="controllerList" class="dialog">
-                <h2>Available Controllers:</h2>
-                <ul>
-                    <g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName } }">
-                        <li class="controller"><g:link controller="${c.logicalPropertyName}">${c.fullName}</g:link></li>
-                    </g:each>
-                </ul>
-            </div>
-        </div>
+    	<div id="welcome">
+    		<h3>Welcome to TekDays</h3>
+    		<p>
+    			TekDays.com is a site dedicated to assisting individuals and communities to organize technology conferences.
+    			To bring great minds with common interests together for the good of the greater geekdom.
+    		</p>
+    	</div>
+    	<div class="homeCell">
+    		<h3>Find a Tek Event</h3>
+    		<p>
+    			See if there's a technical event in the works that strikes your fancy.  If there is, you can volunteer to
+    			help or just let the organizers know you're interested.  Everybody has a role to play.
+    		</p>
+    		<span class="buttons">
+    			<g:link controller="tekEvent" action="list">Find a Tek Event</g:link>
+    		</span>
+    	</div>
+    	<div class="homeCell">
+    		<h3>Organize a Tek Event</h3>
+    		<p>
+    			If you don't see anything that suits your interest and location, then why not get the ball rolling.  It's
+    			easy to get started and there may be other out there ready to get behind you to make it happen.
+    		</p>
+    		<span class="buttons">
+    			<g:link controller="tekEvent" action="create">Organize a Tek Event</g:link>
+    		</span>
+    	</div>
+    	<div class="homeCell">
+    		<h3>Sponsor a Tek Event</h3>
+    		<p>
+    			If you are part of a business or organization that is involved in technology then sponsoring a tek
+    			event would be a great way to let the community know that you're there and you're involved. 
+    		</p>
+    		<span class="buttons">
+    			<g:link controller="sponsor" action="create">Sponsor a Tek Event</g:link>
+    		</span>
+    	</div>
     </body>
 </html>

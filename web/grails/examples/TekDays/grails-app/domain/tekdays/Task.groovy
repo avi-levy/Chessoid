@@ -4,8 +4,9 @@ class Task {
 
 	String		title
 	String 		description
-	String		assignedTo
+	TekUser		assignedTo
 	Date		dueDate
+	TekEvent	event
 	Boolean 	completed
 
 	static belongsTo = TekEvent

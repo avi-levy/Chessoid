@@ -28,6 +28,7 @@ class TekEventController {
     }
 
 	// create a new instance
+	// TODO: modify view so organizer defaults to logged in user (or only uses that and gives no choice)
     def create = {
         def tekEventInstance = new TekEvent()
         tekEventInstance.properties = params
