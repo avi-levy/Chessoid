@@ -39,7 +39,7 @@ class BootStrap {
 			def smartin = new TekUser(
 				fullName:'Sarah Martin',
 				userName:'sarah',
-				password:'54321`',
+				password:'54321',
 				email:'sarah@martinworld.com',
 				website:'www.martinworld.com',
 				bio:'''Web designer and Grails aficionado''')
@@ -51,7 +51,7 @@ class BootStrap {
 			def mrbill = new TekUser(
 				fullName:'Bill Smith',
 				userName:'Mr_Bill',
-				password:'12345`',
+				password:'12345',
 				email:'mrbill@email.com',
 				website:'www.mrbillswebsite.com',
 				bio:'''Software developer, claymation artist''')
@@ -122,7 +122,7 @@ class BootStrap {
 				}
 			}
 			/*
-			 * TODO: SPONSORSHIPS
+			 * SPONSORSHIPS
 			 */
 			def sp1 = new Sponsorship(
 				event:event1,

@@ -14,6 +14,7 @@
         	<%-- <a href="http://grails.org"> --%>
         		<img src="${resource(dir:'images',file:'zardoz.jpg')}" alt="THIS IS SUPPOSED TO BE A LOGO IMAGE" border="0" />
         	<%-- </a> --%>
+        	<g:loginToggle/>
         </div>
         <g:layoutBody />
     </body>

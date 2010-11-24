@@ -16,7 +16,7 @@
 		<tr class="prop">
 			<td valign="top" class="name">Author:</td>
 			<td valign="top" class="value">
-				<g:link controller="tekuser" action="show" id="${messageInstance?.author?.id}">
+				<g:link controller="tekUser" action="show" id="${messageInstance?.author?.id}">
 					${messageInstance?.author?.encodeAsHTML()}
 				</g:link>
 			</td>

@@ -22,14 +22,13 @@ class MessageController {
 			count = Message.count()	
 		}
 		render(
-			view:'ajaxList', 
+			view:'ajaxList',
 			model:[messageInstanceList: list, messageInstanceTotal: count, event: event])
     }
 
     def create = {
         def messageInstance = new Message()
         messageInstance.properties = params
-		println "PARAMS: $params"	// TODO : remove
         return [messageInstance: messageInstance]
     }
 	

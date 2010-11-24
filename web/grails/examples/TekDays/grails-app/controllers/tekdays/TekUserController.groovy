@@ -97,4 +97,32 @@ class TekUserController {
             redirect(action: "list")
         }
     }
+	
+	def login = {
+		if (params.cName) {
+			return [cName:params.cName, aName:params.aName]
+		}
+	}
+	
+	def logout = {
+		session.user = null
+		redirect url:resource(dir:'/')
+	}
+	
+	def validate= {
+		def user = TekUser.findByUserName(params.username)
+		if (user && user.password == params.password) {
+			session.user = user
+			if (params.cName) {
+				redirect controller:'tekEvent', action:params.aName
+			}
+			else {
+				redirect controller:'tekEvent', action:'list'
+			}
+		}
+		else {
+			flash.message = "Invalid username/password combo."
+			render(view:'login')
+		}
+	}
 }
