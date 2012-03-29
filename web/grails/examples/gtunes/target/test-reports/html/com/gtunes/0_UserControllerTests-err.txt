@@ -1,8 +1,0 @@
---Output from testPasswordsDontMatch--
---Output from testRegistrationSuccess--
---Output from testLoginTooShort--
---Output from testRegistrationFailedEmptyLogin--
---Output from testLoginUserNotFound--
---Output from testLoginPasswordInvalid--
---Output from testLoginSucess--
-
