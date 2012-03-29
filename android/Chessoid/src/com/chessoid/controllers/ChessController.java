@@ -192,6 +192,7 @@ public class ChessController {
 		}
 		syncModels();
 		updateStatusView("Thinking...");
+		// TODO "iterate" this should happen in a separate thead, use an IntentService
 		Liaison.INSTANCE.iterate();
 		updateStatusView("");
 		syncModels();
